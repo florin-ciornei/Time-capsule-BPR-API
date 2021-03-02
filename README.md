@@ -1,0 +1,1 @@
+Run `apidoc -i src/ -o doc/` to regenerate the documentaion. It is regenerated in the `/doc` folder.
