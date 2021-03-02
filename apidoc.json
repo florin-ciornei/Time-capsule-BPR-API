@@ -1,0 +1,9 @@
+{
+    "name": "Time Capsule BPR Project",
+    "version": "0.0.1",
+    "description": "This is our API documentation for our Bachelor project",
+    "title": "BPR API documentation",
+    "template": {
+        "forceLanguage": "en"
+    }
+}
