@@ -1,6 +1,7 @@
-const express = require('express');
+import * as express from 'express';
+import UserModel, { User } from "../schemas/user";
+
 const router = express.Router();
-const User = require('../schemas/user');
 
 /**
  * @api {get} /user/:id Register user
@@ -16,7 +17,7 @@ router.post('/register', async (req, res) => {
     let user = req.body;
 
     //check for existing user
-    let existingUser = await User.findById(req.userId).lean();
+    let existingUser = await UserModel.findById(req.userId).lean();
     if (existingUser) {
         return res.status(400).send({
             status: 'error',
@@ -25,7 +26,7 @@ router.post('/register', async (req, res) => {
         });
     }
 
-    await User.create({
+    await UserModel.create({
         _id: req.userId,
         name: user.name,
         email: user.email,
@@ -36,4 +37,4 @@ router.post('/register', async (req, res) => {
     });
 });
 
-module.exports = router;
+export default router;
