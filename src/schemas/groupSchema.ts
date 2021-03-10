@@ -1,17 +1,18 @@
 import * as mongoose from "mongoose";
 
 export interface Group extends mongoose.Document {
-	_id: mongoose.Types.ObjectId,
 	name: string,
-	users: mongoose.Types.ObjectId,
-	owner: mongoose.Types.ObjectId,
+	users: string[],
+	owner: string,
+	usersCount: number;
 }
 
 const GroupSchema: mongoose.Schema = new mongoose.Schema(
 	{
 		name: String,
-		users: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
-		owner: { type: mongoose.Types.ObjectId, ref: 'User' }
+		users: [{ type: String, ref: 'User' }],
+		owner: { type: String, ref: 'User' },
+		usersCount: Number
 	},
 );
 
