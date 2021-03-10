@@ -37,4 +37,14 @@ router.post('/register', async (req, res) => {
     });
 });
 
+router.get("/search/:query", async (req, res) => {
+    let query: string = req.params.query;
+    let users = await UserModel.find({ name: { "$regex": query, "$options": "i" } }).lean();
+    res.status(200).send({
+        status: 'success',
+        users: users,
+        results: users.length
+    })
+});
+
 export default router;

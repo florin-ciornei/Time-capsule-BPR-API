@@ -3,17 +3,7 @@ import UserModel, { User } from "../schemas/userSchema";
 
 const router = express.Router();
 
-/**
- * @api {get} /user/:id Register user
- * @apiGroup User
- *
- * @apiHeader {String} Authorization Must contain the Firebase token.
- * @apiParam {String} name Name of the user.
- * @apiParam {String} email Email of the user.
- *
- * @apiError (Error 400) existing_id There is already a user with such an id.
- */
-router.post('/register', async (req, res) => {
+router.post('/create', async (req, res) => {
     let user = req.body;
 
     //check for existing user

@@ -6,6 +6,7 @@ import * as mongoose from 'mongoose';
 
 //controller imports
 import UserController from './controllers/userController';
+import GroupController from './controllers/groupController';
 import TimeCapsuleController from './controllers/timeCapsuleController';
 
 //router imports
@@ -22,6 +23,7 @@ app.use(devAuthRouter); //authorization header
 
 //add controllers to express app
 app.use('/user', UserController);
+app.use('/group', GroupController);
 app.use('/timeCapsule', TimeCapsuleController);
 
 //connect to MongoDB and start the server
