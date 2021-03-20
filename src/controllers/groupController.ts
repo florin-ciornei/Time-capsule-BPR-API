@@ -4,6 +4,7 @@ import { idText } from 'typescript';
 import GroupModel, { Group } from '../schemas/groupSchema';
 import UserModel, { User } from "../schemas/userSchema";
 const ObjectId = mongoose.Types.ObjectId;
+import * as notificationService from "../services/notificationService";
 
 
 const router = express.Router();
@@ -11,13 +12,18 @@ const router = express.Router();
 router.post('/', async (req, res) => {
     let name: string = req.body.name;
     let users: string[] = req.body.users;
+    let owner: string = req.userId;
+    let usersCount: number = users.length;
+
 
     let group = await GroupModel.create({
         name: name,
         users: users,
-        owner: req.userId,
-        usersCount: users.length
+        owner: owner,
+        usersCount: usersCount
     });
+
+    await notificationService.sendNotificatioins(group);
 
     res.status(200).send({
         status: 'success',
