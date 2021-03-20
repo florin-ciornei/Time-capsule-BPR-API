@@ -14,8 +14,7 @@ router.post('/', async (req, res) => {
     let users: string[] = req.body.users;
     let owner: string = req.userId;
     let usersCount: number = users.length;
-
-
+    
     let group = await GroupModel.create({
         name: name,
         users: users,
