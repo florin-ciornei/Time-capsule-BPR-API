@@ -192,6 +192,113 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Time capsule",
+			"item": [
+				{
+					"name": "Create time capsule",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "capsule name",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "capsule description",
+									"type": "text"
+								},
+								{
+									"key": "openDate",
+									"value": "2022-03-20T12:55:26.075Z",
+									"type": "text"
+								},
+								{
+									"key": "isPrivate",
+									"value": "false",
+									"type": "text"
+								},
+								{
+									"key": "tags",
+									"value": "tag1",
+									"type": "text"
+								},
+								{
+									"key": "tags",
+									"value": "tag2",
+									"type": "text"
+								},
+								{
+									"key": "tags",
+									"value": "tag3",
+									"type": "text"
+								},
+								{
+									"key": "allowedUsers",
+									"value": "userId1",
+									"type": "text"
+								},
+								{
+									"key": "allowedUsers",
+									"value": "userId2",
+									"type": "text"
+								},
+								{
+									"key": "allowedGroups",
+									"value": "groupId1",
+									"type": "text"
+								},
+								{
+									"key": "allowedGroups",
+									"value": "groupId2",
+									"type": "text"
+								},
+								{
+									"key": "lat",
+									"value": "47.123",
+									"type": "text"
+								},
+								{
+									"key": "lon",
+									"value": "20.123",
+									"type": "text"
+								},
+								{
+									"key": "backgroundType",
+									"value": "0",
+									"type": "text"
+								},
+								{
+									"key": "contents",
+									"type": "file",
+									"src": "/C:/Users/Bruger/Pictures/New folder/5fb4e34a2ba65934fcda3891.jpg"
+								},
+								{
+									"key": "contents",
+									"type": "file",
+									"src": "/C:/Users/Bruger/Pictures/New folder/5fb7fca1f5c05708e5200523.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/timeCapsule",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"timeCapsule"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"auth": {
@@ -199,7 +306,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "someUserId",
+				"value": "otherUserid123",
 				"type": "string"
 			}
 		]
