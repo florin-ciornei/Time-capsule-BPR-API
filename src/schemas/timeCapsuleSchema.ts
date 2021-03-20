@@ -6,6 +6,7 @@ export interface TimeCapsule extends mongoose.Document {
 	openDate: Date,
 	createDate: Date,
 	isPrivate: boolean,
+	tags: string[],
 	allowedUsers: string[],
 	allowedGroups: string[],
 	owner: string,
@@ -13,7 +14,8 @@ export interface TimeCapsule extends mongoose.Document {
 		lat: number,
 		lon: number,
 	},
-	backgroundType: number
+	backgroundType: number,
+	contents: { url: string, mimeType: string }[];
 }
 
 const TimeCapsuleSchema: mongoose.Schema = new mongoose.Schema(
@@ -23,6 +25,7 @@ const TimeCapsuleSchema: mongoose.Schema = new mongoose.Schema(
 		openDate: Date,
 		createDate: Date,
 		isPrivate: Boolean,
+		tags: [{ type: String }],
 		allowedUsers: [{ type: String, ref: 'User' }],
 		allowedGroups: [{ type: String, ref: 'Group' }],
 		owner: { type: String, ref: 'User' },
@@ -30,7 +33,8 @@ const TimeCapsuleSchema: mongoose.Schema = new mongoose.Schema(
 			lat: Number,
 			lon: Number,
 		},
-		backgroundType: Number
+		backgroundType: Number,
+		contents: [{ url: String, mimeType: String, _id: false }],
 	},
 );
 
