@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
     let users: string[] = req.body.users;
     let owner: string = req.userId;
     let usersCount: number = users.length;
-    
+
     let group = await GroupModel.create({
         name: name,
         users: users,
@@ -22,7 +22,7 @@ router.post('/', async (req, res) => {
         usersCount: usersCount
     });
 
-    await notificationService.sendNotificatioins(group);
+    await notificationService.sendNotificatioins_CreateGroup(group);
 
     res.status(200).send({
         status: 'success',
@@ -32,21 +32,32 @@ router.post('/', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-    if (!ObjectId.isValid(req.params.id))
+    let groupId = req.params.id;
+    let name: string = req.body.name;
+    let users: string[] = req.body.users;
+    let usersCount = users.length;
+    let owner: string = req.userId;
+
+    if (!ObjectId.isValid(groupId))
         return res.status(400).send({
             status: "error",
             message: "Group id is not a valid id"
         });
 
-    let name: string = req.body.name;
-    let users: string[] = req.body.users;
+    let oldGroup = await GroupModel.findOne({ _id: req.params.id, owner: req.userId })
+        .select("-_id -name -owner -usersCount -__v").lean();
 
-    let group = await GroupModel.findOneAndUpdate({ _id: req.params.id, owner: req.userId }, { name: name, users: users, usersCount: users.length }, { new: true });
+    let updatedGroup = await GroupModel.findOneAndUpdate(
+        { _id: groupId, owner: owner },
+        { name: name, users: users, usersCount: usersCount },
+        { new: true });
+
+    await notificationService.sendNotificatioins_UpdateGroup(oldGroup, updatedGroup);
 
     res.status(200).send({
         status: 'success',
         message: 'Group updated!',
-        group: group
+        group: updatedGroup
     });
 });
 
@@ -81,7 +92,8 @@ router.get("/:id", async (req, res) => {
             message: "Group id is not a valid id"
         });
 
-    let group = await GroupModel.findOne({ _id: req.params.id, owner: req.userId }).populate("users").select("-__v -owner").lean();
+    let group = await GroupModel.findOne({ _id: req.params.id, owner: req.userId })
+        .populate("users").select("-__v -owner").lean();
 
     if (!group)
         return res.status(400).send({
