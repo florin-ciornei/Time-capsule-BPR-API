@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "90c7f74e-c967-4599-91b5-080ca8b107ce",
+		"_postman_id": "ae5859d0-3794-4935-822f-172d9d0e2c48",
 		"name": "BPR",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -31,7 +31,8 @@
 								"user",
 								"register"
 							]
-						}
+						},
+						"description": "Register a user after creating account on firebase\r\n\r\n**asdasdasdasdas**\r\n\r\n`asdasdasd`"
 					},
 					"response": []
 				},
@@ -157,7 +158,8 @@
 								"delete",
 								"6048887b0b11c50618c10729"
 							]
-						}
+						},
+						"description": "asfasgfdgfdgdfg"
 					},
 					"response": []
 				},
@@ -295,6 +297,69 @@
 								"timeCapsule"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get my time capsules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/timeCapsule/my",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"timeCapsule",
+								"my"
+							]
+						},
+						"description": "If the time capsule is opened, the field `isOpened` is true, and the `contents` array is present.\r\n\r\nIf the time capsule is closed, the field `isOpened` is false, and the `contents` array is not present."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tag",
+			"item": [
+				{
+					"name": "Get tag suggestions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/tag/suggestions/ta",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"tag",
+								"suggestions",
+								"ta"
+							]
+						},
+						"description": "{{apiUrl}}/tag/suggestions/`query`\r\n\r\nGets tag suggestions. The response is limited to 20 results."
+					},
+					"response": []
+				},
+				{
+					"name": "Get all tags",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/tag/all",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"tag",
+								"all"
+							]
+						},
+						"description": "Gets all tags. Preferably not to be used in the app, only for testing purposes :)"
 					},
 					"response": []
 				}
