@@ -82,7 +82,22 @@ router.delete("/:id", async (req, res) => {
  * Get a lean list with my time capsules (without contets, just the metadata)
  */
 router.get("/my", async (req, res) => {
-
+	let timeCapsules = await TimeCapsuleModel.find({ owner: req.userId }).lean();
+	let currentDate = new Date();
+	timeCapsules = timeCapsules.map(timeCapsule => {
+		if (timeCapsule.openDate > currentDate) {
+			timeCapsule.isOpened = false;
+			delete timeCapsule.contents;
+		} else {
+			timeCapsule.isOpened = true;
+		}
+		return timeCapsule;
+	});
+	res.status(200).send({
+		status: "success",
+		results: timeCapsules.length,
+		timeCapsules: timeCapsules,
+	});
 });
 
 /**
