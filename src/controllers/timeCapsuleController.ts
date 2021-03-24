@@ -79,7 +79,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 /**
- * Get a lean list with my time capsules (without contets, just the metadata)
+ * Get a lean list with my time capsules.
  */
 router.get("/my", async (req, res) => {
 	let timeCapsules = await TimeCapsuleModel.find({ owner: req.userId }).lean();
