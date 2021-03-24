@@ -74,8 +74,19 @@ router.put("/:id", async (req, res) => {
 /**
  * Delete time capsule.
  */
-router.delete("/:id", async (req, res) => {
-
+router.delete("/delete/:id", async (req, res) => {
+	let result = await TimeCapsuleModel.deleteOne({ _id: req.params.id, owner: req.userId });
+    if (result.n === 1) {
+        res.status(200).send({
+            status: 'success',
+            message: 'Time capsule deleted!',
+        });
+    } else {
+        res.status(400).send({
+            status: 'error',
+            message: 'Did not delete. The time capsule was not found, or it does not belong to you.',
+        });
+    }
 });
 
 /**
