@@ -4,6 +4,8 @@ import GroupModel, { Group } from '../schemas/groupSchema';
 import UserModel, { User } from "../schemas/userSchema";
 import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
 import * as multer from 'multer';
+const ObjectId = mongoose.Types.ObjectId;
+import * as mongoose from 'mongoose';
 
 const router = express.Router();
 const upload = multer({
@@ -75,18 +77,27 @@ router.put("/:id", async (req, res) => {
  * Delete time capsule.
  */
 router.delete("/delete/:id", async (req, res) => {
-	let result = await TimeCapsuleModel.deleteOne({ _id: req.params.id, owner: req.userId });
-    if (result.n === 1) {
-        res.status(200).send({
-            status: 'success',
-            message: 'Time capsule deleted!',
-        });
-    } else {
-        res.status(400).send({
-            status: 'error',
-            message: 'Did not delete. The time capsule was not found, or it does not belong to you.',
-        });
-    }
+	let timeCapsuleID = req.params.id;
+	let ownerID = req.userId;
+
+	if (!ObjectId.isValid(timeCapsuleID))
+		return res.status(400).send({
+			status: "error",
+			message: "Time capsule id is not a valid id"
+		});
+
+	let result = await TimeCapsuleModel.deleteOne({ _id: timeCapsuleID, owner: ownerID });
+	if (result.n === 1) {
+		res.status(200).send({
+			status: 'success',
+			message: 'Time capsule deleted!',
+		});
+	} else {
+		res.status(400).send({
+			status: 'error',
+			message: 'Did not delete. The time capsule was not found, or it does not belong to you.',
+		});
+	}
 });
 
 /**
