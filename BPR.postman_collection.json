@@ -301,6 +301,33 @@
 					"response": []
 				},
 				{
+					"name": "Edit accessibility permissions",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"allowedUsers\": [\r\n        \"324\",\r\n        \"123test123\"\r\n    ],\r\n    \"allowedGroups\": [\r\n        \"ce e asta? :))\",\r\n        \"un grup\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiUrl}}/timeCapsule/605caf2cd090f13eb01b6d5f",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"timeCapsule",
+								"605caf2cd090f13eb01b6d5f"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get my time capsules",
 					"request": {
 						"method": "GET",

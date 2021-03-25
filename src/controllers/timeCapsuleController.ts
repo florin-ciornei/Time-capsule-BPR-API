@@ -70,6 +70,28 @@ router.post("/", upload.array("contents"), async (req, res) => {
  * Update accessibility perimissions for a time capsule.
  */
 router.put("/:id", async (req, res) => {
+	let timeCapsuleID = req.params.id;
+	let ownerID = req.userId;
+	let allowedUsers: string[] = req.body.allowedUsers;
+	let allowedGroups: string[] = req.body.allowedGroups;
+
+
+	if (!ObjectId.isValid(timeCapsuleID))
+		return res.status(400).send({
+			status: "error",
+			message: "Time capsule id is not a valid id"
+		});
+
+	let timeCapsule = await TimeCapsuleModel.findOneAndUpdate(
+		{ _id: timeCapsuleID, owner: ownerID },
+		{ allowedUsers: allowedUsers, allowedGroups: allowedGroups },
+		{ new: true });
+
+	res.status(200).send({
+		status: 'success',
+		message: 'Time capsule updated!',
+		timeCapsule: timeCapsule
+	});
 
 });
 
@@ -142,7 +164,7 @@ router.get("/:id", async (req, res) => {
 		return res.status(400).send({
 			status: "error",
 			message: "Time capsule not found. Either the id is incorrect," +
-			" or the time capsule doesn't belong to you."
+				" or the time capsule doesn't belong to you."
 		});
 
 	res.status(200).send({
