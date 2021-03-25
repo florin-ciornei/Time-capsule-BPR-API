@@ -22,7 +22,7 @@ router.post("/", upload.array("contents"), async (req, res) => {
 	let isPrivate: boolean = req.body.isPrivate;
 	let tags: string[] = req.body.tags;
 	let allowedUsers: string[] = req.body.allowedUsers;
-	let allowedGroups: string[] = req.body.allowedUsers;
+	let allowedGroups: string[] = req.body.allowedGroups;
 	let location: { lat: number, lon: number } = { lat: req.body.lat, lon: req.body.lon };
 	let backgroundType: number = req.body.backgroundType;
 	//TODO validate fields
