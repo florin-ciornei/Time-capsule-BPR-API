@@ -343,6 +343,30 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get  timeCapsule by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/timeCapsule/:id",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"timeCapsule",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

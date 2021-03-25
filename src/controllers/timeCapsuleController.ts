@@ -1,11 +1,11 @@
 import * as express from 'express';
+import * as multer from 'multer';
+import * as mongoose from 'mongoose';
 import firebase from '../services/firebase';
 import GroupModel, { Group } from '../schemas/groupSchema';
 import UserModel, { User } from "../schemas/userSchema";
 import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
-import * as multer from 'multer';
 const ObjectId = mongoose.Types.ObjectId;
-import * as mongoose from 'mongoose';
 
 const router = express.Router();
 const upload = multer({
@@ -126,6 +126,29 @@ router.get("/my", async (req, res) => {
  * Get specific time capsule by its ID.
  */
 router.get("/:id", async (req, res) => {
+	let timeCapsuleID = req.params.id;
+	let ownerID = req.userId;
+
+	if (!ObjectId.isValid(timeCapsuleID))
+		return res.status(400).send({
+			status: "error",
+			message: "Time capsule id is not a valid id"
+		});
+
+	let timeCapsule = await TimeCapsuleModel.findOne({ _id: timeCapsuleID, owner: ownerID })
+		.select("-__v -owner").lean();
+
+	if (!timeCapsule)
+		return res.status(400).send({
+			status: "error",
+			message: "Time capsule not found. Either the id is incorrect," +
+			" or the time capsule doesn't belong to you."
+		});
+
+	res.status(200).send({
+		status: 'success',
+		timeCapsule: timeCapsule
+	});
 
 });
 
