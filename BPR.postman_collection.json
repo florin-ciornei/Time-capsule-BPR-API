@@ -307,7 +307,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"allowedUsers\": [\r\n        \"324\",\r\n        \"123test123\"\r\n    ],\r\n    \"allowedGroups\": [\r\n        \"ce e asta? :))\",\r\n        \"un grup\"\r\n    ]\r\n}",
+							"raw": "{\r\n    \"name\": \"My time capsule name\",\r\n    \"allowedUsers\": [\r\n        \"324\",\r\n        \"123test123\"\r\n    ],\r\n    \"allowedGroups\": [\r\n        \"ce e asta? :))\",\r\n        \"un grup\"\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

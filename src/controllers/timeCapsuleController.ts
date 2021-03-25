@@ -72,6 +72,7 @@ router.post("/", upload.array("contents"), async (req, res) => {
 router.put("/:id", async (req, res) => {
 	let timeCapsuleID = req.params.id;
 	let ownerID = req.userId;
+	let name: string = req.body.name;
 	let allowedUsers: string[] = req.body.allowedUsers;
 	let allowedGroups: string[] = req.body.allowedGroups;
 
@@ -84,7 +85,7 @@ router.put("/:id", async (req, res) => {
 
 	let timeCapsule = await TimeCapsuleModel.findOneAndUpdate(
 		{ _id: timeCapsuleID, owner: ownerID },
-		{ allowedUsers: allowedUsers, allowedGroups: allowedGroups },
+		{ name: name, allowedUsers: allowedUsers, allowedGroups: allowedGroups },
 		{ new: true });
 
 	res.status(200).send({
