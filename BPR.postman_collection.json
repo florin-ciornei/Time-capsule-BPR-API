@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "5ef57586-58dc-4b8f-8a66-9cc33a25e7e5",
+		"_postman_id": "c983bfe8-375f-4714-8ca1-886e60fc9fae",
 		"name": "BPR",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -227,37 +227,37 @@
 									"type": "text"
 								},
 								{
-									"key": "tags",
+									"key": "tags[]",
 									"value": "tag1",
 									"type": "text"
 								},
 								{
-									"key": "tags",
+									"key": "tags[]",
 									"value": "tag2",
 									"type": "text"
 								},
 								{
-									"key": "tags",
+									"key": "tags[]",
 									"value": "tag3",
 									"type": "text"
 								},
 								{
-									"key": "allowedUsers",
+									"key": "allowedUsers[]",
 									"value": "userId1",
 									"type": "text"
 								},
 								{
-									"key": "allowedUsers",
+									"key": "allowedUsers[]",
 									"value": "userId2",
 									"type": "text"
 								},
 								{
-									"key": "allowedGroups",
+									"key": "allowedGroups[]",
 									"value": "groupId1",
 									"type": "text"
 								},
 								{
-									"key": "allowedGroups",
+									"key": "allowedGroups[]",
 									"value": "groupId2",
 									"type": "text"
 								},
@@ -284,7 +284,7 @@
 								{
 									"key": "contents",
 									"type": "file",
-									"src": "/C:/Users/Bruger/Pictures/New folder/5fb7fca1f5c05708e5200523.jpg"
+									"src": "/C:/Users/Bruger/Pictures/New folder/5fb7f93c4824b023176fe90f.jpg"
 								}
 							]
 						},
