@@ -421,19 +421,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{apiUrl}}/timeCapsule/:id",
+							"raw": "{{apiUrl}}/timeCapsule/60672e29eb7fe5b28812838e/react/remove",
 							"host": [
 								"{{apiUrl}}"
 							],
 							"path": [
 								"timeCapsule",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": ""
-								}
+								"60672e29eb7fe5b28812838e",
+								"react",
+								"remove"
 							]
 						},
 						"description": "/timeCapsule/`capsuleId`/react/`reaction`\n\nReact or remove reaction to a time capsule.\n\n`reaction` parameter can have the following values: `remove` (to remove your reaction from this time capsule), `like`, `love`, `laugh`, `compassion`, `startled`, `crying`, `sad`"
