@@ -301,6 +301,25 @@
 					"response": []
 				},
 				{
+					"name": "Get my time capsules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/timeCapsule/my",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"timeCapsule",
+								"my"
+							]
+						},
+						"description": "If the time capsule is opened, the field `isOpened` is true, and the `contents` array is present.\r\n\r\nIf the time capsule is closed, the field `isOpened` is false, and the `contents` array is not present."
+					},
+					"response": []
+				},
+				{
 					"name": "Edit accessibility permissions",
 					"request": {
 						"method": "PUT",
@@ -324,25 +343,6 @@
 								"605caf2cd090f13eb01b6d5f"
 							]
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get my time capsules",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{apiUrl}}/timeCapsule/my",
-							"host": [
-								"{{apiUrl}}"
-							],
-							"path": [
-								"timeCapsule",
-								"my"
-							]
-						},
-						"description": "If the time capsule is opened, the field `isOpened` is true, and the `contents` array is present.\r\n\r\nIf the time capsule is closed, the field `isOpened` is false, and the `contents` array is not present."
 					},
 					"response": []
 				},
@@ -392,6 +392,51 @@
 								}
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Toggle subscription",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/timeCapsule/60649f7ba578ec5fccd12b84/toggleSubscription",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"timeCapsule",
+								"60649f7ba578ec5fccd12b84",
+								"toggleSubscription"
+							]
+						},
+						"description": "/timeCapsule/`capsuleId`/toggleSubscription\n\nToggle subscription to a time capsule."
+					},
+					"response": []
+				},
+				{
+					"name": "React to time capsule",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/timeCapsule/:id",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"timeCapsule",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "/timeCapsule/`capsuleId`/react/`reaction`\n\nReact or remove reaction to a time capsule.\n\n`reaction` parameter can have the following values: `remove` (to remove your reaction from this time capsule), `like`, `love`, `laugh`, `compassion`, `startled`, `crying`, `sad`"
 					},
 					"response": []
 				}
