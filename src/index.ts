@@ -37,6 +37,7 @@ app.use('/timeCapsule', TimeCapsuleController);
             {
                 useNewUrlParser: true,
                 useUnifiedTopology: true,
+                useFindAndModify: false,
             }
         );
     } catch (e) {

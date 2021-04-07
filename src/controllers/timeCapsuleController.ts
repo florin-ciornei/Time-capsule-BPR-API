@@ -145,6 +145,90 @@ router.get("/my", async (req, res) => {
 	});
 });
 
+router.get("/:id/toggleSubscription", async (req, res) => {
+	let timeCapsuleID = req.params.id;
+
+	if (!ObjectId.isValid(timeCapsuleID))
+		return res.status(400).send({
+			status: "error",
+			message: "Time capsule id is not a valid id"
+		});
+
+	let timeCapsule = await TimeCapsuleModel.findById(timeCapsuleID).lean();
+
+	if (!timeCapsule)
+		return res.status(404).send({
+			status: "error",
+			message: "Time capsule with this id doesn't exist."
+		});
+
+	if (timeCapsule.subscribedUsers && timeCapsule.subscribedUsers.includes(req.userId)) {
+		await TimeCapsuleModel.findByIdAndUpdate(timeCapsuleID, { $pull: { subscribedUsers: req.userId } });
+		res.status(200).send({
+			status: "success",
+			toggleAction: "unsubscribed"
+		});
+	} else {
+		await TimeCapsuleModel.findByIdAndUpdate(timeCapsuleID, { $push: { subscribedUsers: req.userId } });
+		res.status(200).send({
+			status: "success",
+			toggleAction: "subscribed"
+		});
+	}
+
+	res.send(200);
+});
+
+enum Reaction {
+	LIKE = "like", LOVE = "love", LAUGH = "laugh", COMPASSION = "compassion", STARTLED = "startled", CRYING = "crying", SAD = "sad"
+}
+
+router.get("/:id/react/:reaction", async (req, res) => {
+	let timeCapsuleID = req.params.id;
+	let reaction = req.params.reaction;
+
+	let reactionAllowedValues = Object.keys(Reaction).map(k => Reaction[k]);
+	reactionAllowedValues.push("remove");
+
+	if (!reactionAllowedValues.includes(reaction))
+		return res.status(400).send({
+			status: "error",
+			message: "This is not an allowed value for the 'reaction' parameter. Please use only remove, like, love, laugh, compassion, startled, crying, sad."
+		});
+
+	if (!ObjectId.isValid(timeCapsuleID))
+		return res.status(400).send({
+			status: "error",
+			message: "Time capsule id is not a valid id"
+		});
+
+	let timeCapsule = await TimeCapsuleModel.findById(timeCapsuleID).lean();
+
+	if (!timeCapsule)
+		return res.status(404).send({
+			status: "error",
+			message: "Time capsule with this id doesn't exist."
+		});
+
+	if (reaction == "remove") {
+		// remove user reactions
+		await TimeCapsuleModel.findByIdAndUpdate(timeCapsuleID, { $pull: { reactions: { userId: req.userId } } }, { multi: true });
+		return res.status(200).send({
+			status: "success",
+			message: "Reaction removed"
+		});
+	} else {
+		// add reaction
+		await TimeCapsuleModel.findByIdAndUpdate(timeCapsuleID, { $pull: { reactions: { userId: req.userId } } }, { multi: true });// remove other reactions if they are present
+		await TimeCapsuleModel.findByIdAndUpdate(timeCapsuleID, { $push: { reactions: { reaction: reaction, userId: req.userId } } });
+		return res.status(200).send({
+			status: "success",
+			message: "Reaction added"
+		});
+	}
+});
+
+
 /**
  * Get specific time capsule by its ID.
  */
