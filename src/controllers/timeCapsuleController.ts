@@ -136,6 +136,9 @@ router.get("/my", async (req, res) => {
 	});
 });
 
+/**
+ * Subscribe / Unsubscribe.
+ */
 router.get("/:id/toggleSubscription", async (req, res) => {
 	let timeCapsuleID = req.params.id;
 
@@ -171,9 +174,13 @@ router.get("/:id/toggleSubscription", async (req, res) => {
 });
 
 enum Reaction {
-	LIKE = "like", LOVE = "love", LAUGH = "laugh", COMPASSION = "compassion", STARTLED = "startled", CRYING = "crying", SAD = "sad"
+	LIKE = "like", LOVE = "love", LAUGH = "laugh", COMPASSION = "compassion", 
+	STARTLED = "startled", CRYING = "crying", SAD = "sad"
 }
 
+/**
+ * Add / remove reaction to time capsule.
+ */
 router.get("/:id/react/:reaction", async (req, res) => {
 	let timeCapsuleID = req.params.id;
 	let reaction = req.params.reaction;
@@ -184,7 +191,8 @@ router.get("/:id/react/:reaction", async (req, res) => {
 	if (!reactionAllowedValues.includes(reaction))
 		return res.status(400).send({
 			status: "error",
-			message: "This is not an allowed value for the 'reaction' parameter. Please use only remove, like, love, laugh, compassion, startled, crying, sad."
+			message: "This is not an allowed value for the 'reaction' parameter. " +
+			"Please use only remove, like, love, laugh, compassion, startled, crying, sad."
 		});
 
 	if (!ObjectId.isValid(timeCapsuleID))
@@ -218,7 +226,6 @@ router.get("/:id/react/:reaction", async (req, res) => {
 		});
 	}
 });
-
 
 /**
  * Get specific time capsule by its ID.
