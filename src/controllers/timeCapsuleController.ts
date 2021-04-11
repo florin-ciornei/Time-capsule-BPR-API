@@ -250,7 +250,7 @@ router.get("/:id", async (req, res) => {
 });
 
 /**
- * Does some parsing ont he time capsule:
+ * Does some parsing on the time capsule:
  * 1. Detect if the user is subscribed
  * 2. Parse how many reactions does the time capsule have
  * 3. Detect my reaction to this time capsule
