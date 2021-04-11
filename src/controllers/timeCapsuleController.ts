@@ -128,16 +128,7 @@ router.delete("/delete/:id", async (req, res) => {
  */
 router.get("/my", async (req, res) => {
 	let timeCapsules = await TimeCapsuleModel.find({ owner: req.userId }).lean();
-	let currentDate = new Date();
-	timeCapsules = timeCapsules.map(timeCapsule => {
-		if (timeCapsule.openDate > currentDate) {
-			timeCapsule.isOpened = false;
-			delete timeCapsule.contents;
-		} else {
-			timeCapsule.isOpened = true;
-		}
-		return timeCapsule;
-	});
+	timeCapsules = timeCapsules.map(timeCapsule => parseTimeCapsule(timeCapsule as TimeCapsule, req.userId, false));
 	res.status(200).send({
 		status: "success",
 		results: timeCapsules.length,
@@ -242,8 +233,7 @@ router.get("/:id", async (req, res) => {
 			message: "Time capsule id is not a valid id"
 		});
 
-	let timeCapsule = await TimeCapsuleModel.findOne({ _id: timeCapsuleID, owner: ownerID })
-		.select("-__v -owner").lean();
+	let timeCapsule = await TimeCapsuleModel.findOne({ _id: timeCapsuleID, owner: ownerID }).lean();
 
 	if (!timeCapsule)
 		return res.status(400).send({
@@ -254,9 +244,44 @@ router.get("/:id", async (req, res) => {
 
 	res.status(200).send({
 		status: 'success',
-		timeCapsule: timeCapsule
+		timeCapsule: parseTimeCapsule(timeCapsule as TimeCapsule, req.userId, false)
 	});
 
 });
+
+/**
+ * Does some parsing ont he time capsule:
+ * 1. Detect if the user is subscribed
+ * 2. Parse how many reactions does the time capsule have
+ * 3. Detect if the time capsule is opened
+ * @param removePrivateData if we need to remove allowed users, allowed groups and other private data to which only the owner has access
+ */
+const parseTimeCapsule = (timeCapsule: TimeCapsule, requestingUserId: string, removePrivateData: boolean) => {
+	// 1. check if the user is subscribed
+	if (timeCapsule.subscribedUsers)
+		timeCapsule.isSubscribed = timeCapsule.subscribedUsers.includes(requestingUserId);
+	else
+		timeCapsule.isSubscribed = false;
+
+	// 2. fill the reactionsLean with values
+	timeCapsule.reactionsLean = Object.keys(Reaction)
+		.map(k => Reaction[k])
+		.map(reaction => ({ reaction: reaction, count: timeCapsule.reactions ? timeCapsule.reactions.filter(r => r.reaction === reaction).length : 0 }));
+
+	// 3. detect if time capsule is opened
+	let currentDate = new Date();
+	if (timeCapsule.openDate > currentDate) {
+		timeCapsule.isOpened = false;
+		delete timeCapsule.contents;
+	} else {
+		timeCapsule.isOpened = true;
+	}
+
+	// these field don't need to be sent to the client
+	delete timeCapsule.subscribedUsers;
+	delete timeCapsule.reactions;
+
+	return timeCapsule;
+}
 
 export default router;

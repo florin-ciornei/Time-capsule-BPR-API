@@ -18,7 +18,9 @@ export interface TimeCapsule extends mongoose.Document {
 	},
 	backgroundType: number,
 	contents: { url: string, mimeType: string }[],
-	isOpened: boolean
+	isOpened: boolean,
+	isSubscribed?: boolean,
+	reactionsLean?: { reaction: string, count: number }[]
 }
 
 const TimeCapsuleSchema: mongoose.Schema = new mongoose.Schema(
