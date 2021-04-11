@@ -137,6 +137,30 @@ router.get("/my", async (req, res) => {
 });
 
 /**
+ * Get all time capsules that I am subscribed to.
+ */
+router.get("/subscribed", async (req, res) => {
+	let ownerID = req.userId;
+	console.log(ownerID);
+	console.log();
+	let subscribedCapsules = await TimeCapsuleModel.find({subscribedUsers: ownerID}).lean();
+	console.log(subscribedCapsules);
+	console.log();
+	
+	if (!subscribedCapsules)
+	return res.status(400).send({
+		status: "error",
+		message: "There are no time capsules. " + 
+		"You haven't subscribed to any time capsules yet."
+	});
+	
+	res.status(200).send({
+		status: 'success',
+		subscribedCapsules: subscribedCapsules
+	});
+	
+});
+/**
  * Subscribe / Unsubscribe.
  */
 router.get("/:id/toggleSubscription", async (req, res) => {
