@@ -21,6 +21,7 @@ export interface TimeCapsule extends mongoose.Document {
 	isOpened: boolean,
 	isSubscribed?: boolean,
 	reactionsLean?: { reaction: string, count: number }[]
+	myReaction?: string
 }
 
 const TimeCapsuleSchema: mongoose.Schema = new mongoose.Schema(
