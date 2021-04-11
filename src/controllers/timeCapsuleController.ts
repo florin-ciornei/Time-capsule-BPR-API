@@ -160,6 +160,20 @@ router.get("/subscribed", async (req, res) => {
 	});
 	
 });
+
+/**
+ * Seach time capsules by tags, content, keywords contained in description or name, open/closed and opening date/time.
+ */
+router.get("/search", async (req, res) => {
+	let tag = req.body.tags;
+	let capsulesFound = await TimeCapsuleModel.find({ tags: tag }).lean();
+	
+	res.status(200).send({
+		status: "success",
+		timeCapsules: capsulesFound,
+	});
+});
+
 /**
  * Subscribe / Unsubscribe.
  */
