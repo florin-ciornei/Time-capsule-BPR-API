@@ -435,6 +435,54 @@
 						"description": "/timeCapsule/`capsuleId`/react/`reaction`\n\nReact or remove reaction to a time capsule.\n\n`reaction` parameter can have the following values: `remove` (to remove your reaction from this time capsule), `like`, `love`, `laugh`, `compassion`, `startled`, `crying`, `sad`"
 					},
 					"response": []
+				},
+				{
+					"name": "GetSubscribedCapsules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/timeCapsule/subscribed",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"timeCapsule",
+								"subscribed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SearchCapsules",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tags\": \"time machine\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiUrl}}/timeCapsule/search",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"timeCapsule",
+								"search"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
