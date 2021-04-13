@@ -1,12 +1,13 @@
 {
-    "compilerOptions": {
-        "moduleResolution": "node",
-        "sourceMap": true,
-        "target": "es2017",
-        "outDir": "./dist",
-        "baseUrl": "./src",
-        "typeRoots": ["@types", "node_modules/@types"]
-    },
-    "include": ["src/**/*.ts"],
-    "exclude": ["node_modules"]
+	"compilerOptions": {
+		"moduleResolution": "node",
+		"sourceMap": true,
+		"target": "es2017",
+		"outDir": "./dist",
+		"baseUrl": "./src",
+		"typeRoots": ["@types", "node_modules/@types"],
+		"allowSyntheticDefaultImports": true
+	},
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules"]
 }
