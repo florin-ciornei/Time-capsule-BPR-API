@@ -27,7 +27,12 @@ router.post("/", upload.array("contents"), async (req, res) => {
 	let backgroundType: number = req.body.backgroundType;
 	//TODO validate fields
 
-
+	// Converts all tags to lower case before saving them 
+	// ans storing the time capsule in the database
+	tags.forEach((tag, index) => {
+		tags[index] = tag.toLowerCase();
+	});
+	
 	//create the time capsule
 	let timeCapsule = await TimeCapsuleModel.create({
 		name: name,
@@ -141,11 +146,8 @@ router.get("/my", async (req, res) => {
  */
 router.get("/subscribed", async (req, res) => {
 	let ownerID = req.userId;
-	console.log(ownerID);
-	console.log();
+	
 	let subscribedCapsules = await TimeCapsuleModel.find({subscribedUsers: ownerID}).lean();
-	console.log(subscribedCapsules);
-	console.log();
 	
 	if (!subscribedCapsules)
 	return res.status(400).send({
@@ -153,6 +155,8 @@ router.get("/subscribed", async (req, res) => {
 		message: "There are no time capsules. " + 
 		"You haven't subscribed to any time capsules yet."
 	});
+
+	subscribedCapsules = subscribedCapsules.map(timeCapsule => parseTimeCapsule(timeCapsule as TimeCapsule, req.userId, false));
 	
 	res.status(200).send({
 		status: 'success',
@@ -166,6 +170,8 @@ router.get("/subscribed", async (req, res) => {
  */
 router.get("/search", async (req, res) => {
 	let tag = req.body.tags;
+	tag = tag.toLowerCase();
+	
 	let capsulesFound = await TimeCapsuleModel.find({ tags: tag }).lean();
 	
 	res.status(200).send({
