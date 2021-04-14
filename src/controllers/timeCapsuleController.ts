@@ -146,15 +146,14 @@ router.get("/my", async (req, res) => {
  */
 router.get("/subscribed", async (req, res) => {
 	let ownerID = req.userId;
-	
 	let subscribedCapsules = await TimeCapsuleModel.find({subscribedUsers: ownerID}).lean();
 	
 	if (!subscribedCapsules)
-	return res.status(400).send({
-		status: "error",
-		message: "There are no time capsules. " + 
-		"You haven't subscribed to any time capsules yet."
-	});
+		return res.status(400).send({
+			status: "error",
+			message: "There are no time capsules. " + 
+			"You haven't subscribed to any time capsules yet."
+		});
 
 	subscribedCapsules = subscribedCapsules.map(timeCapsule => parseTimeCapsule(timeCapsule as TimeCapsule, req.userId, false));
 	
@@ -162,7 +161,7 @@ router.get("/subscribed", async (req, res) => {
 		status: 'success',
 		subscribedCapsules: subscribedCapsules
 	});
-	
+
 });
 
 /**
@@ -173,7 +172,7 @@ router.get("/search", async (req, res) => {
 	tag = tag.toLowerCase();
 	
 	let capsulesFound = await TimeCapsuleModel.find({ tags: tag }).lean();
-	
+
 	res.status(200).send({
 		status: "success",
 		timeCapsules: capsulesFound,
@@ -218,7 +217,7 @@ router.get("/:id/toggleSubscription", async (req, res) => {
 });
 
 enum Reaction {
-	LIKE = "like", LOVE = "love", LAUGH = "laugh", COMPASSION = "compassion", 
+	LIKE = "like", LOVE = "love", LAUGH = "laugh", COMPASSION = "compassion",
 	STARTLED = "startled", CRYING = "crying", SAD = "sad"
 }
 
@@ -236,7 +235,7 @@ router.get("/:id/react/:reaction", async (req, res) => {
 		return res.status(400).send({
 			status: "error",
 			message: "This is not an allowed value for the 'reaction' parameter. " +
-			"Please use only remove, like, love, laugh, compassion, startled, crying, sad."
+				"Please use only remove, like, love, laugh, compassion, startled, crying, sad."
 		});
 
 	if (!ObjectId.isValid(timeCapsuleID))
