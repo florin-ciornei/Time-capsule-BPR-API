@@ -32,7 +32,7 @@ router.post("/", upload.array("contents"), async (req, res) => {
 	tags.forEach((tag, index) => {
 		tags[index] = tag.toLowerCase();
 	});
-	
+
 	//create the time capsule
 	let timeCapsule = await TimeCapsuleModel.create({
 		name: name,
@@ -146,17 +146,17 @@ router.get("/my", async (req, res) => {
  */
 router.get("/subscribed", async (req, res) => {
 	let ownerID = req.userId;
-	let subscribedCapsules = await TimeCapsuleModel.find({subscribedUsers: ownerID}).lean();
-	
+	let subscribedCapsules = await TimeCapsuleModel.find({ subscribedUsers: ownerID }).lean();
+
 	if (!subscribedCapsules)
 		return res.status(400).send({
 			status: "error",
-			message: "There are no time capsules. " + 
-			"You haven't subscribed to any time capsules yet."
+			message: "There are no time capsules. " +
+				"You haven't subscribed to any time capsules yet."
 		});
 
 	subscribedCapsules = subscribedCapsules.map(timeCapsule => parseTimeCapsule(timeCapsule as TimeCapsule, req.userId, false));
-	
+
 	res.status(200).send({
 		status: 'success',
 		subscribedCapsules: subscribedCapsules
@@ -175,56 +175,58 @@ router.get("/search", async (req, res) => {
 	let opening_date_from = req.body.opening_date_from;
 	let opening_date_to = req.body.opening_date_to;
 	let capsulesFound = [];
-	let filter: {[k: string] : any} = {};
-	
+	let filter: { [k: string]: any } = {};
+
 	if (tags) {
 		tags.forEach((tag, index) => {
 			tags[index] = tag.toLowerCase();
 		});
-		filter.tags = { $in: tags};
+		filter.tags = { $in: tags };
 	}
-	
+
 	if (contents) {
 		filter["contents.mimeType"] = contents;
-	} 
-	
+	}
+
 	if (keywords) {
-		let filterKeywords = { 
-			'$or': [{name: { '$regex': keywords, '$options': 'i'}},
-					{description: { '$regex': keywords, '$options': 'i'}}
-				]
-			};
-		filter = { ...filter, ...filterKeywords};
-	} 
-	
+		let filterKeywords = {
+			'$or': [{ name: { '$regex': keywords, '$options': 'i' } },
+			{ description: { '$regex': keywords, '$options': 'i' } }
+			]
+		};
+		filter = { ...filter, ...filterKeywords };
+	}
+
 	if (open_closed) {
 		let currentDate = new Date();
 		if (open_closed == "open") {
-			filter.openDate = { $lte: currentDate};
-		} else if(open_closed == "closed"){
-			filter.openDate = { $gt: currentDate};
-		}
-	}
-		
-	if (opening_date_from || opening_date_to) {
-		if (opening_date_from && opening_date_to) {
-			let opening_date = { '$and': [
-				{ openDate: { '$gte': opening_date_from } },
-				{ openDate: { '$lte': opening_date_to } }
-			]};
-			filter = { ...filter, ...opening_date};
-		} else if (opening_date_from) {
-			let opening_date = { openDate: { '$gte': opening_date_from } };
-			filter = { ...filter, ...opening_date};
-		} else if (opening_date_to) {
-			let opening_date = { openDate: { '$lte': opening_date_to } };
-			filter = { ...filter, ...opening_date};
+			filter.openDate = { $lte: currentDate };
+		} else if (open_closed == "closed") {
+			filter.openDate = { $gt: currentDate };
 		}
 	}
 
-	capsulesFound =  await TimeCapsuleModel.find(filter).lean();
+	if (opening_date_from || opening_date_to) {
+		if (opening_date_from && opening_date_to) {
+			let opening_date = {
+				'$and': [
+					{ openDate: { '$gte': opening_date_from } },
+					{ openDate: { '$lte': opening_date_to } }
+				]
+			};
+			filter = { ...filter, ...opening_date };
+		} else if (opening_date_from) {
+			let opening_date = { openDate: { '$gte': opening_date_from } };
+			filter = { ...filter, ...opening_date };
+		} else if (opening_date_to) {
+			let opening_date = { openDate: { '$lte': opening_date_to } };
+			filter = { ...filter, ...opening_date };
+		}
+	}
+
+	capsulesFound = await TimeCapsuleModel.find(filter).lean();
 	capsulesFound = capsulesFound.map(timeCapsule => parseTimeCapsule(timeCapsule as TimeCapsule, req.userId, false));
-	
+
 	res.status(200).send({
 		status: "success",
 		timeCapsules: capsulesFound
@@ -269,8 +271,8 @@ router.get("/:id/toggleSubscription", async (req, res) => {
 });
 
 enum Reaction {
-	LIKE = "like", LOVE = "love", LAUGH = "laugh", COMPASSION = "compassion",
-	STARTLED = "startled", CRYING = "crying", SAD = "sad"
+	LIKE = "like", LOVE = "love", HAHA = "haha", WOW = "wow", SAD = "sad",
+	ANGRY = "angry"
 }
 
 /**
