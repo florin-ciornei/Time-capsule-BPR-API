@@ -168,14 +168,66 @@ router.get("/subscribed", async (req, res) => {
  * Seach time capsules by tags, content, keywords contained in description or name, open/closed and opening date/time.
  */
 router.get("/search", async (req, res) => {
-	let tag = req.body.tags;
-	tag = tag.toLowerCase();
+	let tags: string[] = req.body.tags;
+	let contents = req.body.contents;
+	let keywords = req.body.keywords;
+	let open_closed = req.body.open_closed;
+	let opening_date_from = req.body.opening_date_from;
+	let opening_date_to = req.body.opening_date_to;
+	let capsulesFound = [];
+	let filter: {[k: string] : any} = {};
 	
-	let capsulesFound = await TimeCapsuleModel.find({ tags: tag }).lean();
+	if (tags) {
+		tags.forEach((tag, index) => {
+			tags[index] = tag.toLowerCase();
+		});
+		filter.tags = { $in: tags};
+	}
+	
+	if (contents) {
+		filter["contents.mimeType"] = contents;
+	} 
+	
+	if (keywords) {
+		let filterKeywords = { 
+			'$or': [{name: { '$regex': keywords, '$options': 'i'}},
+					{description: { '$regex': keywords, '$options': 'i'}}
+				]
+			};
+		filter = { ...filter, ...filterKeywords};
+	} 
+	
+	if (open_closed) {
+		let currentDate = new Date();
+		if (open_closed == "open") {
+			filter.openDate = { $lte: currentDate};
+		} else if(open_closed == "closed"){
+			filter.openDate = { $gt: currentDate};
+		}
+	}
+		
+	if (opening_date_from || opening_date_to) {
+		if (opening_date_from && opening_date_to) {
+			let opening_date = { '$and': [
+				{ openDate: { '$gte': opening_date_from } },
+				{ openDate: { '$lte': opening_date_to } }
+			]};
+			filter = { ...filter, ...opening_date};
+		} else if (opening_date_from) {
+			let opening_date = { openDate: { '$gte': opening_date_from } };
+			filter = { ...filter, ...opening_date};
+		} else if (opening_date_to) {
+			let opening_date = { openDate: { '$lte': opening_date_to } };
+			filter = { ...filter, ...opening_date};
+		}
+	}
 
+	capsulesFound =  await TimeCapsuleModel.find(filter).lean();
+	capsulesFound = capsulesFound.map(timeCapsule => parseTimeCapsule(timeCapsule as TimeCapsule, req.userId, false));
+	
 	res.status(200).send({
 		status: "success",
-		timeCapsules: capsulesFound,
+		timeCapsules: capsulesFound
 	});
 });
 
