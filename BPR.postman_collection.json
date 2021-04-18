@@ -481,7 +481,7 @@
 								"search"
 							]
 						},
-						"description": "\"open_closed\" can have the value \"open\" or \"closed\"\r\n\"opening_date_from\" and \"opening_date_to\" have the format: e.g. \"2021-04-09T10:39:22.034Z\"\r\n\"contents\" e.g. \"image/jpeg\" or \"image/png\"\r\n\"tags\" can be an array like this:\r\n   \"tags\": [\r\n       \"me\",\r\n       \"you\",\r\n       \"etc\"], \r\nOr a simple string value \"text\""
+						"description": "\"open_closed\" can have the value \"open\" or \"closed\"\r\n\"opening_date_from\" and \"opening_date_to\" have the format: e.g. \"2021-04-09T10:39:22.034Z\"\r\n\"contents\" e.g. \"image/jpeg\" or \"image/png\"\r\n\"tags\" is an array of strings like this:\r\n   \"tags\": [\r\n       \"me\",\r\n       \"you\",\r\n       \"etc\"], \r\nOr it can be a one value array \"tags\": [\"text\"],"
 					},
 					"response": []
 				}
