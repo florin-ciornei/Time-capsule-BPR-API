@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c983bfe8-375f-4714-8ca1-886e60fc9fae",
+		"_postman_id": "48f6b159-a32c-4eac-ae8d-4ac415ce1f5d",
 		"name": "BPR",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -64,6 +64,25 @@
 								"user"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/user/123test123",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"user",
+								"123test123"
+							]
+						},
+						"description": "/user/:userId\n\nGet user profile data."
 					},
 					"response": []
 				}
@@ -484,6 +503,26 @@
 						"description": "\"open_closed\" can have the value \"open\" or \"closed\"\r\n\"opening_date_from\" and \"opening_date_to\" have the format: e.g. \"2021-04-09T10:39:22.034Z\"\r\n\"contents\" e.g. \"image/jpeg\" or \"image/png\"\r\n\"tags\" is an array of strings like this:\r\n   \"tags\": [\r\n       \"me\",\r\n       \"you\",\r\n       \"etc\"], \r\nOr it can be a one value array \"tags\": [\"text\"],"
 					},
 					"response": []
+				},
+				{
+					"name": "Get user's time capsules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/timeCapsule/user/test123124242",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"timeCapsule",
+								"user",
+								"test123124242"
+							]
+						},
+						"description": "/timeCapsule/user/`userId`\n\nGet all the time capsules created by a user. This route also filters and hides time capsules to which you don't have access (for example if they are not shared with you, or if they are not shared with a group in which you are present)"
+					},
+					"response": []
 				}
 			]
 		},
@@ -526,6 +565,25 @@
 							]
 						},
 						"description": "Gets all tags. Preferably not to be used in the app, only for testing purposes :)"
+					},
+					"response": []
+				},
+				{
+					"name": "After register tag suggestions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/tag/registerSuggestions",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"tag",
+								"registerSuggestions"
+							]
+						},
+						"description": "Get tag suggestions that are displayed when the users registers."
 					},
 					"response": []
 				}

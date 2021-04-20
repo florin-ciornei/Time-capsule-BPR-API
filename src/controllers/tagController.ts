@@ -25,7 +25,27 @@ router.get("/all", async (req, res) => {
 
 
 /**
- * Get tag suggestions.
+ * Get tag suggestions for the page where the user can pick interests.
+ */
+router.get("/registerSuggestions", async (req, res) => {
+	let tags = await TimeCapsuleModel.aggregate([
+		{ $unwind: "$tags" },
+		{ $project: { tags: 1 } },
+		{ $group: { _id: "$tags", usages: { $sum: 1 } } },
+		{ $sort: { usages: -1 } }
+	]).limit(20);
+	//after the above aggregate we get an array of json objects [{_id:'tag name'}]. The following line transforms it into an array of strings (tags).
+	tags = tags.map(t => t._id);
+	res.json({
+		status: "success",
+		results: tags.length,
+		tags: tags,
+	});
+});
+
+
+/**
+ * Get tag suggestions, when creating a time capsule tag suggestions are displayed when the user is typing.
  */
 router.get("/suggestions/:query", async (req, res) => {
 	let query = req.params.query;
