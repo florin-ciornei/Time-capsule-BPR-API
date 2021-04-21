@@ -231,6 +231,7 @@ router.get("/subscribed", async (req, res) => {
 
 	res.status(200).send({
 		status: 'success',
+		results: subscribedCapsules.length,
 		subscribedCapsules: subscribedCapsules
 	});
 
@@ -318,6 +319,7 @@ router.get("/search", async (req, res) => {
 
 	res.status(200).send({
 		status: "success",
+		results: capsulesFound.length,
 		timeCapsules: capsulesFound
 	});
 });
@@ -378,7 +380,7 @@ router.get("/:id/react/:reaction", async (req, res) => {
 		return res.status(400).send({
 			status: "error",
 			message: "This is not an allowed value for the 'reaction' parameter. " +
-				"Please use only remove, like, love, laugh, compassion, startled, crying, sad."
+				"Please use only remove, like, love, haha, wow, sad, angry."
 		});
 
 	if (!ObjectId.isValid(timeCapsuleID))
@@ -437,6 +439,7 @@ router.get("/:id", async (req, res) => {
 
 	res.status(200).send({
 		status: 'success',
+		message: "Time capsule by ID!",
 		timeCapsule: parseTimeCapsule(timeCapsule as TimeCapsule, req.userId, false)
 	});
 
