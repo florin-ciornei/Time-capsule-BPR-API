@@ -240,6 +240,10 @@ router.get("/subscribed", async (req, res) => {
  * Seach time capsules by tags, content, keywords contained in description or name, open/closed and opening date/time.
  */
 router.get("/search", async (req, res) => {
+	// find the ids of the group this user is added to, they are used to select capsules that have these group ids
+	let myGroups = await GroupModel.find({ users: req.userId }).lean();
+	let myGroupIds = myGroups.map(g => g._id);
+
 	let tags: string[] = req.body.tags;
 	let contents = req.body.contents;
 	let keywords = req.body.keywords;
@@ -247,7 +251,20 @@ router.get("/search", async (req, res) => {
 	let opening_date_from = req.body.opening_date_from;
 	let opening_date_to = req.body.opening_date_to;
 	let capsulesFound = [];
-	let filter: { [k: string]: any } = {};
+	let filter: { [k: string]: any } = {
+		// isPrivate: false,
+		// $or: [
+		// 	// capsules that don't have allowedGroups or allowedUsers can be seen by anyone
+		// 	{
+		// 		allowedGroups: [],
+		// 		allowedUsers: []
+		// 	},
+		// 	// or the capsules in which you are included as an allowed user
+		// 	{ allowedUsers: req.userId },
+		// 	// or the capsules that are shared with a group in which you are included
+		// 	{ allowedGroups: { $in: myGroupIds } }
+		// ]
+	};
 
 	if (tags) {
 		tags.forEach((tag, index) => {
