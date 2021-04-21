@@ -339,6 +339,31 @@
 					"response": []
 				},
 				{
+					"name": "Get feed",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/timeCapsule/feed?page=0",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"timeCapsule",
+								"feed"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								}
+							]
+						},
+						"description": "Use ?page=`pageNumber` for pagination or infinite scroll. There are 20 results per page."
+					},
+					"response": []
+				},
+				{
 					"name": "Edit accessibility permissions",
 					"request": {
 						"method": "PUT",

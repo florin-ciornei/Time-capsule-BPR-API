@@ -145,6 +145,7 @@ router.get("/my", async (req, res) => {
  * Get a lean list with the time capsules of a user.
  */
 router.get("/user/:userId", async (req, res) => {
+	// find the ids of the group this user is added to, they are used to select capsules that have these group ids
 	let myGroups = await GroupModel.find({ users: req.userId }).lean();
 	let myGroupIds = myGroups.map(g => g._id);
 
@@ -163,6 +164,47 @@ router.get("/user/:userId", async (req, res) => {
 	}).lean();
 
 	timeCapsules = timeCapsules.map(timeCapsule => parseTimeCapsule(timeCapsule as TimeCapsule, req.userId, false));
+	res.status(200).send({
+		status: "success",
+		results: timeCapsules.length,
+		timeCapsules: timeCapsules,
+	});
+});
+
+
+/**
+ * Get a lean list with my time capsules.
+ */
+router.get("/feed", async (req, res) => {
+	// find the ids of the group this user is added to, they are used to select capsules that have these group ids
+	let myGroups = await GroupModel.find({ users: req.userId }).lean();
+	let myGroupIds = myGroups.map(g => g._id);
+
+	let usersFollowedByMe = await UserModel.find({ followedByUsers: req.userId }).lean();
+	let usersFollowedByMeIds = usersFollowedByMe.map(u => u._id);
+
+	const resultsPerPage = 20;
+	let page = parseInt(req.query.page as string);
+	if (isNaN(page))
+		page = 0;
+
+	let timeCapsules = await TimeCapsuleModel.find({
+		owner: { $in: usersFollowedByMeIds },
+		isPrivate: false,
+		$or: [
+			// capsules that don't have allowedGroups or allowedUsers can be seen by anyone
+			{
+				allowedGroups: [],
+				allowedUsers: []
+			},
+			// or the capsules in which you are included as an allowed user
+			{ allowedUsers: req.userId },
+			// or the capsules that are shared with a group in which you are included
+			{ allowedGroups: { $in: myGroupIds } }
+		]
+	}).sort({ createDate: "desc" }).skip(page * resultsPerPage).limit(resultsPerPage).lean();
+	timeCapsules = timeCapsules.map(timeCapsule => parseTimeCapsule(timeCapsule as TimeCapsule, req.userId, false));
+
 	res.status(200).send({
 		status: "success",
 		results: timeCapsules.length,
