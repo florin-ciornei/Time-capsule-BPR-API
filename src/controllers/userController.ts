@@ -52,6 +52,21 @@ router.get("/search/:query", async (req, res) => {
  */
 router.get("/:id", async (req, res) => {
     let user = await UserModel.findById(req.params.id).lean();
+
+    if (!user) {
+        return res.status(200).send({
+            status: 'error',
+            code: "user_not_found",
+            message: "A user with this ID was not found."
+        });
+    }
+
+    user.isFollowedByMe = user.followedByUsers.includes(req.userId);
+
+    // no need to send these fields to the client
+    delete user.followedByUsers;
+    delete user.email;
+
     res.status(200).send({
         status: 'success',
         user: user
