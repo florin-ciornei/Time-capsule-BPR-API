@@ -54,7 +54,7 @@ router.get("/:id", async (req, res) => {
     let user = await UserModel.findById(req.params.id).lean();
 
     if (!user) {
-        return res.status(200).send({
+        return res.status(400).send({
             status: 'error',
             code: "user_not_found",
             message: "A user with this ID was not found."
@@ -95,18 +95,16 @@ router.put("/followUnfollow/:id", async (req, res) => {
     if (isFollowed) {
         await UserModel.updateOne(
             { _id: followedUserID },
-            { $pull: { followedByUsers: follower } },
-            { new: true });        
+            { $pull: { followedByUsers: follower } });        
         
         res.status(200).send({
             status: 'success',
             message: "User was successfully unfollowed!"
         });
     } else {
-        await UserModel.findOneAndUpdate(
+        await UserModel.updateOne(
             { _id: followedUserID },
-            { $push: { followedByUsers: follower } },
-            { new: true });        
+            { $push: { followedByUsers: follower } });        
         
         res.status(200).send({
             status: 'success',

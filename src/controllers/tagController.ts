@@ -64,4 +64,34 @@ router.get("/suggestions/:query", async (req, res) => {
 	});
 });
 
+/**
+ *  Save tags preferences for user based on interest, 
+ *  to be used for custom tailoring the feed for the user 
+ */
+router.put("/saveTags", async (req, res) => {
+	let tags = req.body.tags;
+	let userId = req.userId;
+
+	// Removes emty strings from the list of tags!
+	let cleanTags = tags.filter(Boolean);
+	
+	// If emty it then clears the list of preffered tags!
+	if (cleanTags) {
+		await UserModel.updateOne(
+			{ _id: userId },
+			{ $set: { prefferedTags: cleanTags } });
+
+		res.status(200).send({
+			status: 'success',
+			message: "The tags have been added to the user's list of prefferences!"
+		});
+	} else {
+		return res.status(400).send({
+			status: "error",
+			message: "The list of provided tags is emty, no tags have been added!"
+		});
+
+	}
+});
+
 export default router;

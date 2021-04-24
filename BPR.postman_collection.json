@@ -636,6 +636,33 @@
 						"description": "Get tag suggestions that are displayed when the users registers."
 					},
 					"response": []
+				},
+				{
+					"name": "Save preferred tags",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tags\": [\r\n        \"tag1\",\r\n        \"time machine\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiUrl}}/tag/saveTags",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"tag",
+								"saveTags"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}

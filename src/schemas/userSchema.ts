@@ -5,6 +5,7 @@ export interface User extends mongoose.Document {
     name: string,
     email: string,
     followedByUsers: string[],
+    prefferedTags: string[],
 
     // calculated at runtime, not stored in MongoDB
     isFollowedByMe:boolean
@@ -16,6 +17,7 @@ const UserSchema: mongoose.Schema = new mongoose.Schema(
         name: String,
         email: String,
         followedByUsers: [{ type: String, ref: 'User' }],
+        prefferedTags: [{ type: String }],
     },
     { _id: false },
 );
