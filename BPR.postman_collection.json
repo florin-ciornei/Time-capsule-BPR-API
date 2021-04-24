@@ -85,6 +85,31 @@
 						"description": "/user/:userId\n\nGet user profile data."
 					},
 					"response": []
+				},
+				{
+					"name": "Follow user",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/user/followUnfollow/:id",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"user",
+								"followUnfollow",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},

@@ -73,4 +73,47 @@ router.get("/:id", async (req, res) => {
     });
 });
 
+/**
+ *  Follow / Unfollow another user.
+ */
+router.put("/followUnfollow/:id", async (req, res) => {
+    let follower = req.userId;
+    let followedUserID = req.params.id;
+
+    let followedUser = await UserModel.findById(followedUserID).lean();
+
+    if (!followedUser) {
+        return res.status(200).send({
+            status: 'error',
+            code: "user_not_found",
+            message: "There is no user with this ID!"
+        });
+    }    
+    
+    let isFollowed = followedUser.followedByUsers.includes(follower);
+
+    if (isFollowed) {
+        await UserModel.updateOne(
+            { _id: followedUserID },
+            { $pull: { followedByUsers: follower } },
+            { new: true });        
+        
+        res.status(200).send({
+            status: 'success',
+            message: "User was successfully unfollowed!"
+        });
+    } else {
+        await UserModel.findOneAndUpdate(
+            { _id: followedUserID },
+            { $push: { followedByUsers: follower } },
+            { new: true });        
+        
+        res.status(200).send({
+            status: 'success',
+            message: "User was successfully followed!"
+        });
+    }
+
+});
+
 export default router;
