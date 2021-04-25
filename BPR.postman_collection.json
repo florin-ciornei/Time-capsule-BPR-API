@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "48f6b159-a32c-4eac-ae8d-4ac415ce1f5d",
+		"_postman_id": "7c8685cc-4836-44c3-9739-c28e758237c4",
 		"name": "BPR",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -533,7 +533,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n   \"tags\": [\"time\",\r\n            \"\"],\r\n   \"contents\": \"image/png\",\r\n   \"keywords\": \"classmates\",\r\n   \"open_closed\": \"open\",\r\n   \"opening_date_from\": \"2021-04-03T10:39:22.034Z\",\r\n   \"opening_date_to\": \"2030-04-14T10:39:22.034Z\"\r\n}",
+							"raw": "{\r\n   \"keyword\": \"classmates\",\r\n   \"search_in_tags\" : true,\r\n   \"search_in_name\" : true,\r\n   \"search_in_description\" : true,\r\n   \"contents\": \"image/png\",\r\n   \"open_closed\": \"open\",\r\n   \"opening_date_from\": \"2021-04-03T10:39:22.034Z\",\r\n   \"opening_date_to\": \"2030-04-14T10:39:22.034Z\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

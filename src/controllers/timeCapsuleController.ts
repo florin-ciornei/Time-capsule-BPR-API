@@ -244,10 +244,11 @@ router.get("/search", async (req, res) => {
 	// find the ids of the group this user is added to, they are used to select capsules that have these group ids
 	let myGroups = await GroupModel.find({ users: req.userId }).lean();
 	let myGroupIds = myGroups.map(g => g._id);
-
-	let tags: string[] = req.body.tags;
+	let keyword = req.body.keyword;
+	let searchInTags = req.body.search_in_tags;
+	let searchInName = req.body.search_in_name;
+	let searchInDescription = req.body.search_in_description;
 	let contents = req.body.contents;
-	let keywords = req.body.keywords;
 	let open_closed = req.body.open_closed;
 	let opening_date_from = req.body.opening_date_from;
 	let opening_date_to = req.body.opening_date_to;
@@ -267,25 +268,45 @@ router.get("/search", async (req, res) => {
 		// ]
 	};
 
-	if (tags) {
-		tags.forEach((tag, index) => {
-			tags[index] = tag.toLowerCase();
-		});
-		filter.tags = { $in: tags };
+	if (searchInTags) {
+		let filterTags = {
+			'$or': [{ tags: { '$regex': keyword, '$options': 'i' } }]
+		}
+		filter = { ...filter, ...filterTags };
+	}
+
+	if (searchInName) {
+		// let filterName = { name: { '$regex': keyword, '$options': 'i' } };
+		
+		// filter = { ...filter, ...filterName };
+		let filterName = { name: { '$regex': keyword, '$options': 'i' } };
+		
+		filter = { ...filter, ...filterName };
+	} else if (searchInName && !searchInTags) {
+		let filterName = {
+			'$or': [{ name: { '$regex': keyword, '$options': 'i' } }]
+		}
+		filter = { ...filter, ...filterName };
+	}
+
+	if (searchInDescription) {
+		let filterDescription = { description: { '$regex': keyword, '$options': 'i' } };
+		
+		filter = { ...filter, ...filterDescription };
 	}
 
 	if (contents) {
 		filter["contents.mimeType"] = contents;
 	}
 
-	if (keywords) {
-		let filterKeywords = {
-			'$or': [{ name: { '$regex': keywords, '$options': 'i' } },
-			{ description: { '$regex': keywords, '$options': 'i' } }
-			]
-		};
-		filter = { ...filter, ...filterKeywords };
-	}
+	// if (keywords) {
+	// 	let filterKeywords = {
+	// 		'$or': [{ name: { '$regex': keywords, '$options': 'i' } },
+	// 		{ description: { '$regex': keywords, '$options': 'i' } }
+	// 		]
+	// 	};
+	// 	filter = { ...filter, ...filterKeywords };
+	// }
 
 	if (open_closed) {
 		let currentDate = new Date();
