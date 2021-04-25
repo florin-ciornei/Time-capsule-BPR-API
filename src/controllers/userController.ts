@@ -61,8 +61,8 @@ router.get('/:id', async (req, res) => {
 		});
 	}
 
-	user.isFollowedByMe = user.followedByUsers.includes(req.userId);
-
+    user.isFollowedByMe = user.followedByUsers ? user.followedByUsers.includes(req.userId) : false;
+    
 	// no need to send these fields to the client
 	delete user.followedByUsers;
 	delete user.email;
