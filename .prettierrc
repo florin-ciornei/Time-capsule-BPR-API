@@ -3,6 +3,6 @@
 	"singleQuote": true,
 	"useTabs": true,
 	"endOfLine": "auto",
-	"printWidth": 160,
+	"printWidth": 200,
 	"trailingComma": "none"
 }
