@@ -212,8 +212,6 @@ router.get('/feed', async (req, res) => {
 		filter["openDate"] = { $gt: new Date() };
 	}
 
-	console.log(filter);
-
 	let timeCapsules = await TimeCapsuleModel.find(filter)
 		.sort({ createDate: 'desc' })
 		.skip(page * resultsPerPage)
