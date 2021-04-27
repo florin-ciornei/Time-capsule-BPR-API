@@ -188,7 +188,7 @@ router.get('/feed', async (req, res) => {
 	let page = parseInt(req.query.page as string);
 	if (isNaN(page)) page = 0;
 
-	let timeCapsules = await TimeCapsuleModel.find({
+	let filter = {
 		owner: { $in: usersFollowedByMeIds },
 		isPrivate: false,
 		$or: [
@@ -202,7 +202,19 @@ router.get('/feed', async (req, res) => {
 			// or the capsules that are shared with a group in which you are included
 			{ allowedGroups: { $in: myGroupIds } }
 		]
-	})
+	};
+
+	if (req.query.status == "opened") {
+		filter["openDate"] = { $lt: new Date() };
+	}
+
+	if (req.query.status == "closed") {
+		filter["openDate"] = { $gt: new Date() };
+	}
+
+	console.log(filter);
+
+	let timeCapsules = await TimeCapsuleModel.find(filter)
 		.sort({ createDate: 'desc' })
 		.skip(page * resultsPerPage)
 		.limit(resultsPerPage)
