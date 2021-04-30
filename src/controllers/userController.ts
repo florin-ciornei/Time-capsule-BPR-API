@@ -61,10 +61,13 @@ router.get('/:id', async (req, res) => {
 		});
 	}
 
-    user.isFollowedByMe = user.followedByUsers ? user.followedByUsers.includes(req.userId) : false;
-    
+	user.isFollowedByMe = user.followedByUsers ? user.followedByUsers.includes(req.userId) : false;
+	user.followersCount = user.followedByUsers ? user.followedByUsers.length : 0;
+	user.followingCount = user.followingUsers ? user.followingUsers.length : 0;
+
 	// no need to send these fields to the client
 	delete user.followedByUsers;
+	delete user.followingUsers;
 	delete user.email;
 
 	res.status(200).send({
@@ -100,6 +103,7 @@ router.put('/followUnfollow/:id', async (req, res) => {
 
 	if (isFollowed) {
 		await UserModel.updateOne({ _id: followedUserID }, { $pull: { followedByUsers: follower } });
+		await UserModel.updateOne({ _id: req.userId }, { $pull: { followingUsers: follower } });
 
 		res.status(200).send({
 			status: 'success',
@@ -107,6 +111,7 @@ router.put('/followUnfollow/:id', async (req, res) => {
 		});
 	} else {
 		await UserModel.updateOne({ _id: followedUserID }, { $push: { followedByUsers: follower } });
+		await UserModel.updateOne({ _id: req.userId }, { $push: { followingUsers: follower } });
 
 		res.status(200).send({
 			status: 'success',
