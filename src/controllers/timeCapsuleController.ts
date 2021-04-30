@@ -130,7 +130,7 @@ router.delete('/delete/:id', async (req, res) => {
  * Get a lean list with my time capsules.
  */
 router.get('/my', async (req, res) => {
-	let timeCapsules = await TimeCapsuleModel.find({ owner: req.userId }).lean();
+	let timeCapsules = await TimeCapsuleModel.find({ owner: req.userId }).populate("owner", "name").lean();
 	timeCapsules = timeCapsules.map((timeCapsule) => parseTimeCapsule(timeCapsule as TimeCapsule, req.userId, false));
 	res.status(200).send({
 		status: 'success',
@@ -161,7 +161,7 @@ router.get('/user/:userId', async (req, res) => {
 			// or the capsules that are shared with a group in which you are included
 			{ allowedGroups: { $in: myGroupIds } }
 		]
-	}).lean();
+	}).populate("owner", "name").lean();
 
 	timeCapsules = timeCapsules.map((timeCapsule) => parseTimeCapsule(timeCapsule as TimeCapsule, req.userId, false));
 	res.status(200).send({
@@ -213,6 +213,7 @@ router.get('/feed', async (req, res) => {
 	}
 
 	let timeCapsules = await TimeCapsuleModel.find(filter)
+		.populate("owner", "name")
 		.sort({ createDate: 'desc' })
 		.skip(page * resultsPerPage)
 		.limit(resultsPerPage)
@@ -233,7 +234,7 @@ router.get('/subscribed', async (req, res) => {
 	let ownerID = req.userId;
 	let subscribedCapsules = await TimeCapsuleModel.find({
 		subscribedUsers: ownerID
-	}).lean();
+	}).populate("owner", "name").lean();
 
 	if (!subscribedCapsules)
 		return res.status(400).send({
@@ -335,7 +336,7 @@ router.get('/search', async (req, res) => {
 	}
 	console.log(filter);
 
-	capsulesFound = await TimeCapsuleModel.find(filter).lean();
+	capsulesFound = await TimeCapsuleModel.find(filter).populate("owner", "name").lean();
 	capsulesFound = capsulesFound.map((timeCapsule) => parseTimeCapsule(timeCapsule as TimeCapsule, req.userId, false));
 
 	res.status(200).send({
@@ -461,7 +462,7 @@ router.get('/:id', async (req, res) => {
 	let timeCapsule = await TimeCapsuleModel.findOne({
 		_id: timeCapsuleID,
 		owner: ownerID
-	}).lean();
+	}).populate("owner", "name").lean();
 
 	if (!timeCapsule)
 		return res.status(400).send({
