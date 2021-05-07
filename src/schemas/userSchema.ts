@@ -12,6 +12,7 @@ export interface User extends mongoose.Document {
     isFollowedByMe: boolean;
     followersCount: number;
     followingCount: number;
+    timeCapsulesCount: number;
 }
 
 const UserSchema: mongoose.Schema = new mongoose.Schema(

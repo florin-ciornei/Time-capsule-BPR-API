@@ -1,5 +1,7 @@
 import * as express from 'express';
+import { preProcessFile } from 'typescript';
 import UserModel, { User } from '../schemas/userSchema';
+import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
 
 const router = express.Router();
 
@@ -47,6 +49,38 @@ router.get('/search/:query', async (req, res) => {
 	});
 });
 
+
+/**
+ * Get profile data for my account
+ */
+router.get('/me', async (req, res) => {
+	let user = await UserModel.findById(req.userId).lean();
+
+	if (!user) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'user_not_found',
+			message: 'Couldnt retrieve your preProcessFile, user with this id not found'
+		});
+	}
+
+
+	user.followersCount = user.followedByUsers ? user.followedByUsers.length : 0;
+	user.followingCount = user.followingUsers ? user.followingUsers.length : 0;
+	user.timeCapsulesCount = (await TimeCapsuleModel.count({ owner: req.userId }));
+
+	// no need to send these fields to the client
+	delete user.followedByUsers;
+	delete user.followingUsers;
+	delete user.email;
+	delete user.prefferedTags;
+
+	res.status(200).send({
+		status: 'success',
+		user: user
+	});
+});
+
 /**
  * Get profile data for a user.
  */
@@ -69,12 +103,14 @@ router.get('/:id', async (req, res) => {
 	delete user.followedByUsers;
 	delete user.followingUsers;
 	delete user.email;
+	delete user.prefferedTags;
 
 	res.status(200).send({
 		status: 'success',
 		user: user
 	});
 });
+
 
 /**
  *  Follow / Unfollow another user.
