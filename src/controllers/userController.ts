@@ -2,6 +2,8 @@ import * as express from 'express';
 import { preProcessFile } from 'typescript';
 import UserModel, { User } from '../schemas/userSchema';
 import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
+import * as multer from 'multer';
+import firebase from '../services/firebase';
 
 const router = express.Router();
 
@@ -154,6 +156,30 @@ router.put('/followUnfollow/:id', async (req, res) => {
 			message: 'User was successfully followed!'
 		});
 	}
+});
+
+/**
+ * Change profile picture
+ */
+const upload = multer({
+	storage: multer.memoryStorage()
+});
+router.put('/profileImage', upload.single("image"), async (req, res) => {
+	let fileUrl = await firebase.uploadFileToBucket(req.file, "profilePicture", req.userId);
+	await UserModel.findByIdAndUpdate(req.userId, { profileImageUrl: fileUrl });
+	res.status(200).send({
+		status: 'success',
+		message: 'Profile image changed!',
+		imageUrl: `${fileUrl}?v=${new Date().getTime()}`
+	});
+});
+
+router.delete('/profileImage', upload.single("image"), async (req, res) => {
+	await UserModel.findByIdAndUpdate(req.userId, { profileImageUrl: "" });
+	res.status(200).send({
+		status: 'success',
+		message: 'Profile image deleted!',
+	});
 });
 
 export default router;

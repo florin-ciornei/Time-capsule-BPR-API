@@ -10,11 +10,11 @@ admin.initializeApp({
 // Cloud storage
 const bucket = admin.storage().bucket();
 
-const uploadFileToBucket = async (file: Express.Multer.File, capsuleId: string, uploadedFileName: string): Promise<string> => {
+const uploadFileToBucket = async (file: Express.Multer.File, folder: string, uploadedFileName: string): Promise<string> => {
 
 	return new Promise((resolve, reject) => {
 
-		let newFileName = `capsuleContents/${capsuleId}/${uploadedFileName}`;
+		let newFileName = `capsuleContents/${folder}/${uploadedFileName}`;
 
 		let fileUpload = bucket.file(newFileName);
 
