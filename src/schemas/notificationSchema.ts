@@ -10,7 +10,7 @@ export interface Notification extends mongoose.Document {
 
 const NotificationSchema: mongoose.Schema = new mongoose.Schema(
     {
-        timeCapsule: String,
+        timeCapsule: { type: String, ref: 'TimeCapsule'},
         byUser: { type: String, ref: 'User'},
         toUser: { type: String, ref: 'User'},
         time: Date,

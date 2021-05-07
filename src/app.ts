@@ -8,6 +8,7 @@ import UserController from './controllers/userController';
 import GroupController from './controllers/groupController';
 import TimeCapsuleController from './controllers/timeCapsuleController';
 import TagController from './controllers/tagController';
+import NotificationController from './controllers/notificationController';
 
 //router imports
 import { devAuthRouter } from './routers/authRouters';
@@ -25,5 +26,6 @@ app.use('/user', UserController);
 app.use('/group', GroupController);
 app.use('/tag', TagController);
 app.use('/timeCapsule', TimeCapsuleController);
+app.use('/notification', NotificationController);
 
 export default app;

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7c8685cc-4836-44c3-9739-c28e758237c4",
+		"_postman_id": "28769912-9549-42dc-87e8-ca1c426db89b",
 		"name": "BPR",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -87,6 +87,25 @@
 					"response": []
 				},
 				{
+					"name": "Get my profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/user/me",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"user",
+								"me"
+							]
+						},
+						"description": "/user/me\n\nGet my user profile data."
+					},
+					"response": []
+				},
+				{
 					"name": "Follow user",
 					"request": {
 						"method": "PUT",
@@ -106,6 +125,52 @@
 									"key": "id",
 									"value": ""
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change profile image",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/Bruger/Pictures/New folder/5fb7f93c4824b023176fe90f.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/user/profileImage",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"user",
+								"profileImage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete profile image",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/user/profileImage",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"user",
+								"profileImage"
 							]
 						}
 					},
@@ -659,6 +724,34 @@
 							"path": [
 								"tag",
 								"saveTags"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notifications",
+			"item": [
+				{
+					"name": "Get my notifications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/notification?page=0",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"notification"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								}
 							]
 						}
 					},
