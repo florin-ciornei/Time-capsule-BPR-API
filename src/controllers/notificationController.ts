@@ -14,7 +14,6 @@ router.get("/", async (req, res) => {
 	if (isNaN(page)) page = 0;
 
 	let notifications = await NotificationModel.find({ toUser: req.userId })
-		.populate("toUser", "_id name profilePictureUrl")
 		.populate("byUser", "_id name profilePictureUrl")
 		.populate("group", "_id name")
 		.populate("timeCapsule", "_id name openData description backgroundType")
@@ -22,6 +21,12 @@ router.get("/", async (req, res) => {
 		.skip(page * resultsPerPage)
 		.limit(resultsPerPage)
 		.lean();
+
+	notifications.forEach((n) => {
+		delete n.__v;
+		delete n._id;
+		delete n.toUser;
+	})
 
 	res.json({
 		status: "success",
