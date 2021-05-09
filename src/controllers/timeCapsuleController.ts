@@ -5,6 +5,7 @@ import firebase from '../services/firebase';
 import GroupModel, { Group } from '../schemas/groupSchema';
 import UserModel, { User } from '../schemas/userSchema';
 import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
+import { SendSubScribeToTimeCapsuleNotification } from '../services/notificationService';
 const ObjectId = mongoose.Types.ObjectId;
 
 const router = express.Router();
@@ -378,13 +379,12 @@ router.get('/:id/toggleSubscription', async (req, res) => {
 		await TimeCapsuleModel.findByIdAndUpdate(timeCapsuleID, {
 			$push: { subscribedUsers: req.userId }
 		});
+		SendSubScribeToTimeCapsuleNotification(timeCapsuleID, req.userId)
 		res.status(200).send({
 			status: 'success',
 			toggleAction: 'subscribed'
 		});
 	}
-
-	res.send(200);
 });
 
 enum Reaction {

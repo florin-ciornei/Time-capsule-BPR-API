@@ -1,4 +1,5 @@
 import NotificationModel, { Notification } from '../schemas/notificationSchema';
+import TimeCapsulenModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
 
 const sendNotificatioins_CreateGroup = async (group) => {
     group.users.forEach(async (user) => {
@@ -27,6 +28,22 @@ const sendNotificatioins_UpdateGroup = async (oldGroup, updatedGroup) => {
         }
     })
 }
+
+export const SendSubScribeToTimeCapsuleNotification = async (timeCapsuleId: string, userId: string) => {
+    let timeCapsule = await TimeCapsulenModel.findById(timeCapsuleId);
+    let notificationExists = (await NotificationModel.countDocuments({ toUser: timeCapsule.owner, type: "subscribedToTimeCapsule" })) > 0;
+    if (notificationExists)
+        return;
+    NotificationModel.create({
+        timeCapsule: timeCapsule._id,
+        byUser: userId,
+        toUser: timeCapsule.owner,
+        time: new Date(),
+        group: undefined,
+        type: "subscribedToTimeCapsule"
+    });
+}
+
 
 export {
     sendNotificatioins_CreateGroup,

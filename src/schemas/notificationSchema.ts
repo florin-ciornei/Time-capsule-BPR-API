@@ -5,16 +5,18 @@ export interface Notification extends mongoose.Document {
     byUser: string,
     toUser: string,
     time: Date,
-    group: string
+    group: string,
+    type: string
 }
 
 const NotificationSchema: mongoose.Schema = new mongoose.Schema(
     {
-        timeCapsule: { type: String, ref: 'TimeCapsule'},
-        byUser: { type: String, ref: 'User'},
-        toUser: { type: String, ref: 'User'},
+        timeCapsule: { type: String, ref: 'TimeCapsule' },
+        byUser: { type: String, ref: 'User' },
+        toUser: { type: String, ref: 'User' },
+        type: String,
         time: Date,
-        group: { type: String, ref: 'Group'}
+        group: { type: String, ref: 'Group' }
     },
 );
 
