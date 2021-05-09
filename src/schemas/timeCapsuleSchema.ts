@@ -21,7 +21,8 @@ export interface TimeCapsule extends mongoose.Document {
 	isOpened: boolean,
 	isSubscribed?: boolean,
 	reactionsLean?: { reaction: string, count: number }[]
-	myReaction?: string
+	myReaction?: string,
+	openNotificationSent: boolean
 }
 
 const TimeCapsuleSchema: mongoose.Schema = new mongoose.Schema(
@@ -43,6 +44,7 @@ const TimeCapsuleSchema: mongoose.Schema = new mongoose.Schema(
 		},
 		backgroundType: Number,
 		contents: [{ url: String, mimeType: String, _id: false }],
+		openNotificationSent: Boolean
 	},
 );
 

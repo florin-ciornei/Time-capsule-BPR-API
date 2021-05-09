@@ -1,4 +1,7 @@
+import * as  _ from 'lodash';
+import { Group } from '../schemas/groupSchema';
 import NotificationModel, { Notification } from '../schemas/notificationSchema';
+import timeCapsuleSchema from '../schemas/timeCapsuleSchema';
 import TimeCapsulenModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
 
 const sendNotificatioins_CreateGroup = async (group) => {
@@ -43,6 +46,43 @@ export const SendSubScribeToTimeCapsuleNotification = async (timeCapsuleId: stri
         type: "subscribedToTimeCapsule"
     });
 }
+
+const SendTimeCapsuleOpenNotification = async () => {
+    //find capsules that opened but we did not send notifications to them
+    const filter = { openDate: { $lt: new Date() }, openNotificationSent: { $in: [false, null, undefined] } };
+    const timeCapsules = await timeCapsuleSchema.find({ openDate: { $lt: new Date() }, openNotificationSent: { $in: [false, null, undefined] } }).populate("allowedGroups").lean();
+
+    // build the array with user IDs to whom open notification is sent
+    timeCapsules.forEach(t => {
+        let sendNotificationToTheseUsers: string[] = [];
+        sendNotificationToTheseUsers.push(t.owner);
+        sendNotificationToTheseUsers.push(...t.allowedUsers);
+        let groups = ((t.allowedGroups as any) as Group[]);
+        groups.forEach((g) => {
+            sendNotificationToTheseUsers.push(...g.users);
+        });
+
+        sendNotificationToTheseUsers = _.uniq(sendNotificationToTheseUsers);
+
+        sendNotificationToTheseUsers.forEach(userId => {
+            NotificationModel.create({
+                timeCapsule: t._id,
+                byUser: undefined,
+                toUser: userId,
+                time: new Date(),
+                group: undefined,
+                type: "timeCapsuleOpened"
+            });
+        })
+    });
+
+    await timeCapsuleSchema.updateMany({ openDate: { $lt: new Date() }, openNotificationSent: { $in: [false, null, undefined] } }, { openNotificationSent: true })
+}
+
+setInterval(() => {
+    SendTimeCapsuleOpenNotification();
+}, 10000);
+
 
 
 export {
