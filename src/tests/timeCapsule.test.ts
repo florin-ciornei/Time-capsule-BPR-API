@@ -39,8 +39,7 @@ describe('Test TimeCapsuleController', () => {
 			.field('allowedGroups[]', 'groupId2')
 			.field('lat', '47.123')
 			.field('lon', '20.123')
-			.field('backgroundType', '0')
-			.attach('contents', 'C:/testPic.jpg')
+			.field('backgroundType', '0');
 		expect(result.status).toBe(200);
 	});
 
