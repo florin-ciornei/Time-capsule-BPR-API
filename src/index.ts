@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 import app from './app';
-const port = 8080;
+const port = process.env.PORT || 8080;
 
 //connect to MongoDB and start the server
 (async () => {
@@ -13,7 +13,7 @@ const port = 8080;
                 useUnifiedTopology: true,
                 useFindAndModify: false,
             }
-        ); 
+        );
     } catch (e) {
         console.log('Failed to connect to MongoDB: ' + e);
         return;
@@ -24,3 +24,5 @@ const port = 8080;
         console.log(`For API documentation visit http://localhost:${port}/doc`);
     });
 })();
+
+module.exports = app;
