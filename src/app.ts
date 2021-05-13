@@ -21,6 +21,7 @@ app.use('/doc', express.static('doc')); //API documentation
 app.use(bodyParser.json()); //parse for the JSON body
 app.use(devAuthRouter); //authorization header
 
+
 //add controllers to express app
 app.use('/user', UserController);
 app.use('/group', GroupController);
