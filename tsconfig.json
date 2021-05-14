@@ -4,6 +4,7 @@
 		"sourceMap": true,
 		"module": "commonjs",
 		"target": "es2017",
+		"outDir": "./dist",
 		"baseUrl": "./src",
 		"typeRoots": ["@types", "node_modules/@types"],
 		"allowSyntheticDefaultImports": true
