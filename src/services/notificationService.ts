@@ -79,11 +79,11 @@ const SendTimeCapsuleOpenNotification = async () => {
     await timeCapsuleSchema.updateMany({ openDate: { $lt: new Date() }, openNotificationSent: { $in: [false, null, undefined] } }, { openNotificationSent: true })
 }
 
-setInterval(() => {
-    SendTimeCapsuleOpenNotification();
-}, 10000);
-
-
+if (process.env.NODE_ENV != "test") {
+    setInterval(() => {
+        SendTimeCapsuleOpenNotification();
+    }, 10000);
+}
 
 export {
     sendNotificatioins_CreateGroup,

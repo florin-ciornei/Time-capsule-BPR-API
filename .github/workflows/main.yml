@@ -27,6 +27,7 @@ jobs:
         with:
           node-version: '14'
       - run: npm install
+      - run: npm test
       - uses: google-github-actions/deploy-appengine@main
         with:
           credentials: ${{ secrets.gcp_credentials }}
