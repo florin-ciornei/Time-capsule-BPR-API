@@ -166,11 +166,12 @@ const upload = multer({
 });
 router.put('/profileImage', upload.single("image"), async (req, res) => {
 	let fileUrl = await firebase.uploadFileToBucket(req.file, "profilePicture", req.userId);
+	fileUrl += `?v=${new Date().getTime()}`;
 	await UserModel.findByIdAndUpdate(req.userId, { profileImageUrl: fileUrl });
 	res.status(200).send({
 		status: 'success',
 		message: 'Profile image changed!',
-		imageUrl: `${fileUrl}?v=${new Date().getTime()}`
+		imageUrl: fileUrl
 	});
 });
 
