@@ -39,6 +39,7 @@ const uploadFileToBucket = async (file: Express.Multer.File, folder: string, upl
 }
 
 export default {
+	admin,
 	bucket,
 	uploadFileToBucket
 }
