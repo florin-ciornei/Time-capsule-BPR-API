@@ -15,7 +15,7 @@ import { devAuthRouter } from './routers/authRouters';
 
 const app = express();
 
-app.get("/", (req, res) => { res.send("BPR TimeCapsule API test ci cd with tests") })
+app.get("/", (req, res) => { res.send("BPR TimeCapsule API test ci cd with tests ") })
 
 //some usefull express additions
 app.use(cors()); //allow all origins to make requests to the API
