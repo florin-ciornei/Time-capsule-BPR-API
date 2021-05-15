@@ -2,8 +2,11 @@ import * as express from 'express';
 import { preProcessFile } from 'typescript';
 import UserModel, { User } from '../schemas/userSchema';
 import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
+import NotificationModel, { Notification } from '../schemas/notificationSchema';
+import GroupModel, { Group } from '../schemas/groupSchema';
 import * as multer from 'multer';
 import firebase from '../services/firebase';
+import { sendFollowNotification } from '../services/notificationService';
 
 const router = express.Router();
 
@@ -150,6 +153,7 @@ router.put('/followUnfollow/:id', async (req, res) => {
 	} else {
 		await UserModel.updateOne({ _id: followedUserID }, { $push: { followedByUsers: follower } });
 		await UserModel.updateOne({ _id: req.userId }, { $push: { followingUsers: follower } });
+		await sendFollowNotification(req.userId, followedUserID);
 
 		res.status(200).send({
 			status: 'success',
@@ -158,12 +162,33 @@ router.put('/followUnfollow/:id', async (req, res) => {
 	}
 });
 
-// update user data
+/**
+ * Update user data.
+ */
 router.put('/', async (req, res) => {
 	await UserModel.findByIdAndUpdate(req.userId, { name: req.body.name });
 	res.status(200).send({
 		status: 'success',
 		message: 'User data updated!',
+	});
+});
+
+/**
+ * Delete user profile.
+ */
+router.delete('/', async (req, res) => {
+	await UserModel.deleteOne({ _id: req.userId });
+	await NotificationModel.deleteMany({ toUser: req.userId });
+	await TimeCapsuleModel.deleteMany({ owner: req.userId });
+	await GroupModel.deleteMany({ owner: req.userId });
+	try {
+		await firebase.admin.auth().deleteUser(req.userId);
+	} catch (e) {
+		console.log(e.code, e.message);
+	}
+	res.status(200).send({
+		status: 'success',
+		message: 'User profile deleted!',
 	});
 });
 
