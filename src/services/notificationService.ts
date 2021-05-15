@@ -32,6 +32,25 @@ const sendNotificatioins_UpdateGroup = async (oldGroup, updatedGroup) => {
     })
 }
 
+export const SendAddedToAllowedUsersNotifications = async (capsuleId: string, userIds: string[], byUserId: string) => {
+    for (let i = 0; i < userIds.length; i++) {
+        let userId = userIds[i];
+        let existingNotification = await NotificationModel.countDocuments({ toUser: userId, timeCapsule: capsuleId, type: "addedToAllowedUsers" });
+        console.log(existingNotification);
+        // dont add notification if it already exists for this user
+        if (existingNotification > 0)
+            continue;
+        await NotificationModel.create({
+            timeCapsule: capsuleId,
+            byUser: byUserId,
+            toUser: userId,
+            time: new Date(),
+            group: undefined,
+            type: "addedToAllowedUsers"
+        });
+    }
+}
+
 export const SendSubScribeToTimeCapsuleNotification = async (timeCapsuleId: string, userId: string) => {
     let timeCapsule = await TimeCapsulenModel.findById(timeCapsuleId);
     let notificationExists = (await NotificationModel.countDocuments({ toUser: timeCapsule.owner, type: "subscribedToTimeCapsule" })) > 0;

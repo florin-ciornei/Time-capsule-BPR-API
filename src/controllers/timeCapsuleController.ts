@@ -5,7 +5,7 @@ import firebase from '../services/firebase';
 import GroupModel, { Group } from '../schemas/groupSchema';
 import UserModel, { User } from '../schemas/userSchema';
 import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
-import { SendSubScribeToTimeCapsuleNotification } from '../services/notificationService';
+import { SendAddedToAllowedUsersNotifications, SendSubScribeToTimeCapsuleNotification } from '../services/notificationService';
 const ObjectId = mongoose.Types.ObjectId;
 
 const router = express.Router();
@@ -64,6 +64,8 @@ router.post('/', upload.array('contents'), async (req, res) => {
 	}
 	timeCapsule.contents = contents;
 	await timeCapsule.save();
+	SendAddedToAllowedUsersNotifications(timeCapsule._id, allowedUsers, req.userId);
+
 
 	res.status(200).send({
 		status: 'success',
@@ -89,6 +91,7 @@ router.put('/:id', async (req, res) => {
 		});
 
 	let timeCapsule = await TimeCapsuleModel.findOneAndUpdate({ _id: timeCapsuleID, owner: ownerID }, { name: name, allowedUsers: allowedUsers, allowedGroups: allowedGroups }, { new: true });
+	SendAddedToAllowedUsersNotifications(timeCapsule._id, allowedUsers, req.userId);
 
 	res.status(200).send({
 		status: 'success',
