@@ -7,7 +7,7 @@ export const devAuthRouter = async (req: express.Request, res: express.Response,
     if (!req.headers.authorization) {
         // if the token is missing, continue. This is the case for guest user.
         return next();
-    } else if (process.env.NODE_ENV == "test") {
+    } else if (process.env.NODE_ENV == "test" || process.env.NODE_ENV == "dev") {
         // while testing consider the token to be the user id
         req.userId = req.headers.authorization.replace('Bearer ', '');
     } else {

@@ -158,6 +158,15 @@ router.put('/followUnfollow/:id', async (req, res) => {
 	}
 });
 
+// update user data
+router.put('/', async (req, res) => {
+	await UserModel.findByIdAndUpdate(req.userId, { name: req.body.name });
+	res.status(200).send({
+		status: 'success',
+		message: 'User data updated!',
+	});
+});
+
 /**
  * Change profile picture
  */
