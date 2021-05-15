@@ -5,6 +5,7 @@ import GroupModel, { Group } from '../schemas/groupSchema';
 import UserModel, { User } from "../schemas/userSchema";
 const ObjectId = mongoose.Types.ObjectId;
 import * as notificationService from "../services/notificationService";
+import { SendAddedToGroupNotifications } from '../services/notificationService';
 
 
 const router = express.Router();
@@ -22,7 +23,7 @@ router.post('/', async (req, res) => {
         usersCount: usersCount
     });
 
-    await notificationService.sendNotificatioins_CreateGroup(group);
+    SendAddedToGroupNotifications(group._id, users, req.userId);
 
     res.status(200).send({
         status: 'success',
@@ -52,7 +53,7 @@ router.put('/:id', async (req, res) => {
         { name: name, users: users, usersCount: usersCount },
         { new: true });
 
-    await notificationService.sendNotificatioins_UpdateGroup(oldGroup, updatedGroup);
+    SendAddedToGroupNotifications(updatedGroup._id, users, req.userId);
 
     res.status(200).send({
         status: 'success',

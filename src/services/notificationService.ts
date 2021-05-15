@@ -4,32 +4,22 @@ import NotificationModel, { Notification } from '../schemas/notificationSchema';
 import timeCapsuleSchema from '../schemas/timeCapsuleSchema';
 import TimeCapsulenModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
 
-const sendNotificatioins_CreateGroup = async (group) => {
-    group.users.forEach(async (user) => {
+export const SendAddedToGroupNotifications = async (groupId: string, userIds: string[], byUserId: string) => {
+    for (let i = 0; i < userIds.length; i++) {
+        let userId = userIds[i];
+        let existingNotification = await NotificationModel.countDocuments({ toUser: userId, group: groupId, type: "addedToGroup" });
+        // dont add notification if it already exists for this user
+        if (existingNotification > 0)
+            continue;
         await NotificationModel.create({
-            timeCapsule: null,
-            byUser: group.owner,
-            toUser: user,
+            timeCapsule: undefined,
+            byUser: byUserId,
+            toUser: userId,
             time: new Date(),
-            group: group.id
+            group: groupId,
+            type: "addedToGroup"
         });
-    })
-}
-
-const sendNotificatioins_UpdateGroup = async (oldGroup, updatedGroup) => {
-    updatedGroup.users.forEach(async (user) => {
-        // If the 'user' is not present in the list of users from the
-        // old group ('oldGroup.users'), then it means that it's a new user 
-        if (!oldGroup.users.includes(user)) {
-            await NotificationModel.create({
-                timeCapsule: null,
-                byUser: updatedGroup.owner,
-                toUser: user,
-                time: new Date(),
-                group: updatedGroup.id
-            });
-        }
-    })
+    }
 }
 
 export const SendAddedToAllowedUsersNotifications = async (capsuleId: string, userIds: string[], byUserId: string) => {
@@ -116,9 +106,4 @@ if (process.env.NODE_ENV != "test") {
     setInterval(() => {
         SendTimeCapsuleOpenNotification();
     }, 10000);
-}
-
-export {
-    sendNotificatioins_CreateGroup,
-    sendNotificatioins_UpdateGroup,
 }
