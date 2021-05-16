@@ -35,6 +35,8 @@ router.post('/', upload.array('contents'), async (req, res) => {
 
 	// Converts all tags to lower case before saving them
 	// ans storing the time capsule in the database
+	if (!tags)
+		tags = [];
 	tags.forEach((tag, index) => {
 		tags[index] = tag.toLowerCase();
 	});
@@ -190,7 +192,7 @@ router.get('/user/:userId', async (req, res) => {
 });
 
 /**
- * Get a lean list with my time capsules.
+ * Get a lean list with the feed for the authneticated user.
  */
 router.get('/feed', async (req, res) => {
 	// find the ids of the group this user is added to, they are used to select capsules that have these group ids
@@ -245,6 +247,45 @@ router.get('/feed', async (req, res) => {
 	});
 });
 
+
+/**
+ * Get a lean list with a public feed
+ */
+router.get('/publicFeed', async (req, res) => {
+	const resultsPerPage = 20;
+	let page = parseInt(req.query.page as string);
+	if (isNaN(page)) page = 0;
+
+	let filter = {
+		isPrivate: false,
+		allowedGroups: [],
+		allowedUsers: []
+	};
+
+	if (req.query.status == "opened") {
+		filter["openDate"] = { $lt: new Date() };
+	}
+
+	if (req.query.status == "closed") {
+		filter["openDate"] = { $gt: new Date() };
+	}
+
+	let timeCapsules = await TimeCapsuleModel.find(filter)
+		.populate("owner", "name")
+		.sort({ createDate: 'desc' })
+		.skip(page * resultsPerPage)
+		.limit(resultsPerPage)
+		.lean();
+	timeCapsules = timeCapsules.map((timeCapsule) => parseTimeCapsule(timeCapsule as TimeCapsule, req.userId, false));
+
+	res.status(200).send({
+		status: 'success',
+		results: timeCapsules.length,
+		timeCapsules: timeCapsules
+	});
+});
+
+
 /**
  * Get all time capsules that I am subscribed to.
  */
@@ -272,7 +313,7 @@ router.get('/subscribed', async (req, res) => {
 /**
  * Seach time capsules by tags, content, keywords contained in description or name, open/closed and opening date/time.
  */
-router.get('/search', async (req, res) => {
+router.post('/search', async (req, res) => {
 	// find the ids of the group this user is added to, they are used to select capsules that have these group ids
 	let myGroups = await GroupModel.find({ users: req.userId }).lean();
 	let myGroupIds = myGroups.map((g) => g._id);

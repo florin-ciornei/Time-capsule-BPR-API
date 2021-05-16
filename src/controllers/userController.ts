@@ -46,7 +46,8 @@ router.post('/register', async (req, res) => {
 
 router.get('/search/:query', async (req, res) => {
 	let query: string = req.params.query;
-	let users = await UserModel.find({ name: { $regex: query, $options: 'i' } }).lean();
+	let users = await UserModel.find({ name: { $regex: query, $options: 'i' } }).limit(20).lean();
+	users = users.filter(u => u._id != req.userId);
 	res.status(200).send({
 		status: 'success',
 		users: users,

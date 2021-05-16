@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Name\",\r\n    \"email\": \"Email\"\r\n}",
+							"raw": "{\r\n    \"name\": \"user2\",\r\n    \"email\": \"email2\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -38,21 +38,9 @@
 				},
 				{
 					"name": "Search users by name",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Name\",\r\n    \"email\": \"Email\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
 							"raw": "{{apiUrl}}/user/search/user",
 							"host": [
@@ -407,7 +395,8 @@
 								{
 									"key": "tags[]",
 									"value": "tag3",
-									"type": "text"
+									"type": "text",
+									"disabled": true
 								},
 								{
 									"key": "allowedUsers[]",
@@ -488,7 +477,7 @@
 					"response": []
 				},
 				{
-					"name": "Get feed",
+					"name": "Get feed for authneticated user",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -500,6 +489,31 @@
 							"path": [
 								"timeCapsule",
 								"feed"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								}
+							]
+						},
+						"description": "Use ?page=`pageNumber` for pagination or infinite scroll. There are 20 results per page."
+					},
+					"response": []
+				},
+				{
+					"name": "Get feed for public user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/timeCapsule/publicFeed?page=0",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"timeCapsule",
+								"publicFeed"
 							],
 							"query": [
 								{
@@ -669,11 +683,8 @@
 				},
 				{
 					"name": "SearchCapsules",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
@@ -844,7 +855,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "userId1",
+				"value": "userId2",
 				"type": "string"
 			}
 		]
