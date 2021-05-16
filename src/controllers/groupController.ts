@@ -3,8 +3,9 @@ import * as mongoose from 'mongoose';
 import { idText } from 'typescript';
 import GroupModel, { Group } from '../schemas/groupSchema';
 import UserModel, { User } from "../schemas/userSchema";
+import NotificationModel, { Notification } from "../schemas/notificationSchema";
+
 const ObjectId = mongoose.Types.ObjectId;
-import * as notificationService from "../services/notificationService";
 import { SendAddedToGroupNotifications } from '../services/notificationService';
 
 
@@ -29,6 +30,18 @@ router.post('/', async (req, res) => {
         status: 'success',
         message: 'Group created!',
         group: group
+    });
+});
+
+router.put('/leaveGroup/:groupId', async (req, res) => {
+    let groupId = req.params.groupId;
+
+    await GroupModel.updateOne({ _id: groupId }, { $pull: { users: req.userId } });
+    await NotificationModel.deleteOne({ toUser: req.userId, group: groupId, type: "addedToGroup" });
+
+    res.status(200).send({
+        status: 'success',
+        message: 'Group left, notification deleted!',
     });
 });
 

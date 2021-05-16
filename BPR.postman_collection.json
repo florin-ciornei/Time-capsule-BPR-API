@@ -340,6 +340,26 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Leave group",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/group/leaveGroup/60a0b3ad4107a4356c92814a",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"group",
+								"leaveGroup",
+								"60a0b3ad4107a4356c92814a"
+							]
+						},
+						"description": "/group/leaveGroup/`groupId`\n\nThe user can leave a group to which he/she was added."
+					},
+					"response": []
 				}
 			]
 		},
@@ -516,6 +536,26 @@
 								"605caf2cd090f13eb01b6d5f"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Leave allowed users",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/timeCapsule/leaveAllowedUsers/60a0b4f7ed3a5a2c10750db7",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"timeCapsule",
+								"leaveAllowedUsers",
+								"60a0b4f7ed3a5a2c10750db7"
+							]
+						},
+						"description": "/timeCapsule/leaveAllowedUsers/`capsuleId`\n\nThe user can leave the list of allowed users to which he/she was added."
 					},
 					"response": []
 				},
@@ -804,7 +844,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "123test123aaaaa",
+				"value": "userId1",
 				"type": "string"
 			}
 		]

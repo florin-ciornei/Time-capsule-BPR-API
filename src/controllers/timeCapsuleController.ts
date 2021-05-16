@@ -6,6 +6,8 @@ import GroupModel, { Group } from '../schemas/groupSchema';
 import UserModel, { User } from '../schemas/userSchema';
 import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
 import { SendAddedToAllowedUsersNotifications, SendSubScribeToTimeCapsuleNotification } from '../services/notificationService';
+import NotificationModel, { Notification } from "../schemas/notificationSchema";
+
 const ObjectId = mongoose.Types.ObjectId;
 
 const router = express.Router();
@@ -71,6 +73,18 @@ router.post('/', upload.array('contents'), async (req, res) => {
 		status: 'success',
 		message: 'Time capsule created!',
 		timeCapsule: timeCapsule
+	});
+});
+
+router.put('/leaveAllowedUsers/:capsuleId', async (req, res) => {
+	let capsuleId = req.params.capsuleId;
+
+	await TimeCapsuleModel.updateOne({ _id: capsuleId }, { $pull: { allowedUsers: req.userId } });
+	await NotificationModel.deleteOne({ toUser: req.userId, timeCapsule: capsuleId, type: "addedToAllowedUsers" });
+
+	res.status(200).send({
+		status: 'success',
+		message: 'User was removed from the allowed users, the notification was deleted!',
 	});
 });
 
