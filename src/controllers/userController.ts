@@ -5,7 +5,7 @@ import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
 import NotificationModel, { Notification } from '../schemas/notificationSchema';
 import GroupModel, { Group } from '../schemas/groupSchema';
 import * as multer from 'multer';
-import firebase from '../services/firebase';
+import firebase from '../services/firebaseService';
 import { sendFollowNotification } from '../services/notificationService';
 
 const router = express.Router();

@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as multer from 'multer';
 import * as mongoose from 'mongoose';
-import firebase from '../services/firebase';
+import firebase from '../services/firebaseService';
 import GroupModel, { Group } from '../schemas/groupSchema';
 import UserModel, { User } from '../schemas/userSchema';
 import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
