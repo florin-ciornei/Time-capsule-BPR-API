@@ -1,31 +1,23 @@
 import * as express from 'express';
-import { preProcessFile } from 'typescript';
-import UserModel, { User } from '../schemas/userSchema';
-import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
-import NotificationModel, { Notification } from '../schemas/notificationSchema';
-import GroupModel, { Group } from '../schemas/groupSchema';
 import * as multer from 'multer';
-import firebase from '../services/firebaseService';
-import { sendFollowNotification } from '../services/notificationService';
+import { CheckUserIdInUse, CreateUserAccount, DeleteProfilePicture, DeleteUserProfile, GetMyProfile, GetRawUser, GetUserProfile, SearchUsers, ToggleFollow, UpdateProfilePicture, UpdateUser } from '../services/userService';
+import { requireAuth } from '../routers/authRouters';
 
 const router = express.Router();
+const upload = multer({
+	storage: multer.memoryStorage()
+});
 
 /**
- * @api {get} /user/:id Register user
- * @apiGroup User
- *
- * @apiHeader {String} Authorization Must contain the Firebase token.
- * @apiParam {String} name Name of the user.
- * @apiParam {String} email Email of the user.
- *
- * @apiError (Error 400) existing_id There is already a user with such an id.
+ * Register a new user.
  */
-router.post('/register', async (req, res) => {
-	let user = req.body;
+router.post('/register', requireAuth, async (req, res) => {
+	let email = req.body.email as string;
+	let name = req.body.name as string;
 
 	//check for existing user
-	let existingUser = await UserModel.findById(req.userId).lean();
-	if (existingUser) {
+	let userExists = await CheckUserIdInUse(req.userId);
+	if (userExists) {
 		return res.status(400).send({
 			status: 'error',
 			code: 'existing_id',
@@ -33,11 +25,8 @@ router.post('/register', async (req, res) => {
 		});
 	}
 
-	await UserModel.create({
-		_id: req.userId,
-		name: user.name,
-		email: user.email
-	});
+	await CreateUserAccount(req.userId, email, name);
+
 	res.status(200).send({
 		status: 'success',
 		message: 'User registered!'
@@ -46,8 +35,7 @@ router.post('/register', async (req, res) => {
 
 router.get('/search/:query', async (req, res) => {
 	let query: string = req.params.query;
-	let users = await UserModel.find({ name: { $regex: query, $options: 'i' } }).limit(20).lean();
-	users = users.filter(u => u._id != req.userId);
+	let users = await SearchUsers(query, req.userId);
 	res.status(200).send({
 		status: 'success',
 		users: users,
@@ -55,14 +43,13 @@ router.get('/search/:query', async (req, res) => {
 	});
 });
 
-
 /**
- * Get profile data for my account
+ * Get profile data for my account.
  */
-router.get('/me', async (req, res) => {
-	let user = await UserModel.findById(req.userId).lean();
+router.get('/me', requireAuth, async (req, res) => {
+	let profile = await GetMyProfile(req.userId);
 
-	if (!user) {
+	if (!profile) {
 		return res.status(400).send({
 			status: 'error',
 			code: 'user_not_found',
@@ -70,20 +57,9 @@ router.get('/me', async (req, res) => {
 		});
 	}
 
-
-	user.followersCount = user.followedByUsers ? user.followedByUsers.length : 0;
-	user.followingCount = user.followingUsers ? user.followingUsers.length : 0;
-	user.timeCapsulesCount = (await TimeCapsuleModel.count({ owner: req.userId }));
-
-	// no need to send these fields to the client
-	delete user.followedByUsers;
-	delete user.followingUsers;
-	delete user.email;
-	delete user.prefferedTags;
-
 	res.status(200).send({
 		status: 'success',
-		user: user
+		user: profile
 	});
 });
 
@@ -91,9 +67,9 @@ router.get('/me', async (req, res) => {
  * Get profile data for a user.
  */
 router.get('/:id', async (req, res) => {
-	let user = await UserModel.findById(req.params.id).lean();
+	let profile = await GetUserProfile(req.params.id as string, req.userId);
 
-	if (!user) {
+	if (!profile) {
 		return res.status(400).send({
 			status: 'error',
 			code: 'user_not_found',
@@ -101,37 +77,19 @@ router.get('/:id', async (req, res) => {
 		});
 	}
 
-	user.isFollowedByMe = user.followedByUsers ? user.followedByUsers.includes(req.userId) : false;
-	user.followersCount = user.followedByUsers ? user.followedByUsers.length : 0;
-	user.followingCount = user.followingUsers ? user.followingUsers.length : 0;
-
-	// no need to send these fields to the client
-	delete user.followedByUsers;
-	delete user.followingUsers;
-	delete user.email;
-	delete user.prefferedTags;
-
 	res.status(200).send({
 		status: 'success',
-		user: user
+		user: profile
 	});
 });
-
 
 /**
  *  Follow / Unfollow another user.
  */
-router.put('/followUnfollow/:id', async (req, res) => {
+router.put('/followUnfollow/:id', requireAuth, async (req, res) => {
 	let follower = req.userId;
 	let followedUserID = req.params.id;
-
-	// if (!ObjectId.isValid(followedUserID))
-	// 	return res.status(400).send({
-	// 		status: "error",
-	// 		message: "User ID is not a valid ID!"
-	// 	});
-
-	let followedUser = await UserModel.findById(followedUserID).lean();
+	let followedUser = await GetRawUser(followedUserID);
 
 	if (!followedUser) {
 		return res.status(200).send({
@@ -144,18 +102,13 @@ router.put('/followUnfollow/:id', async (req, res) => {
 	let isFollowed = followedUser.followedByUsers ? followedUser.followedByUsers.includes(follower) : false;
 
 	if (isFollowed) {
-		await UserModel.updateOne({ _id: followedUserID }, { $pull: { followedByUsers: follower } });
-		await UserModel.updateOne({ _id: req.userId }, { $pull: { followingUsers: follower } });
-
+		await ToggleFollow(followedUserID, follower, true);
 		res.status(200).send({
 			status: 'success',
 			message: 'User was successfully unfollowed!'
 		});
 	} else {
-		await UserModel.updateOne({ _id: followedUserID }, { $push: { followedByUsers: follower } });
-		await UserModel.updateOne({ _id: req.userId }, { $push: { followingUsers: follower } });
-		await sendFollowNotification(req.userId, followedUserID);
-
+		await ToggleFollow(followedUserID, follower, true);
 		res.status(200).send({
 			status: 'success',
 			message: 'User was successfully followed!'
@@ -166,8 +119,8 @@ router.put('/followUnfollow/:id', async (req, res) => {
 /**
  * Update user data.
  */
-router.put('/', async (req, res) => {
-	await UserModel.findByIdAndUpdate(req.userId, { name: req.body.name });
+router.put('/', requireAuth, async (req, res) => {
+	await UpdateUser(req.userId, req.body.name);
 	res.status(200).send({
 		status: 'success',
 		message: 'User data updated!',
@@ -177,16 +130,8 @@ router.put('/', async (req, res) => {
 /**
  * Delete user profile.
  */
-router.delete('/', async (req, res) => {
-	await UserModel.deleteOne({ _id: req.userId });
-	await NotificationModel.deleteMany({ toUser: req.userId });
-	await TimeCapsuleModel.deleteMany({ owner: req.userId });
-	await GroupModel.deleteMany({ owner: req.userId });
-	try {
-		await firebase.admin.auth().deleteUser(req.userId);
-	} catch (e) {
-		console.log(e.code, e.message);
-	}
+router.delete('/', requireAuth, async (req, res) => {
+	await DeleteUserProfile(req.userId);
 	res.status(200).send({
 		status: 'success',
 		message: 'User profile deleted!',
@@ -194,15 +139,10 @@ router.delete('/', async (req, res) => {
 });
 
 /**
- * Change profile picture
+ * Change profile picture.
  */
-const upload = multer({
-	storage: multer.memoryStorage()
-});
-router.put('/profileImage', upload.single("image"), async (req, res) => {
-	let fileUrl = await firebase.uploadFileToBucket(req.file, "profilePicture", req.userId);
-	fileUrl += `?v=${new Date().getTime()}`;
-	await UserModel.findByIdAndUpdate(req.userId, { profileImageUrl: fileUrl });
+router.put('/profileImage', requireAuth, upload.single("image"), async (req, res) => {
+	let fileUrl = await UpdateProfilePicture(req.userId, req.file);
 	res.status(200).send({
 		status: 'success',
 		message: 'Profile image changed!',
@@ -210,8 +150,11 @@ router.put('/profileImage', upload.single("image"), async (req, res) => {
 	});
 });
 
-router.delete('/profileImage', upload.single("image"), async (req, res) => {
-	await UserModel.findByIdAndUpdate(req.userId, { profileImageUrl: "" });
+/**
+ * Delete profile picture (client will display a default profile picture)
+ */
+router.delete('/profileImage', requireAuth, async (req, res) => {
+	await DeleteProfilePicture(req.userId);
 	res.status(200).send({
 		status: 'success',
 		message: 'Profile image deleted!',

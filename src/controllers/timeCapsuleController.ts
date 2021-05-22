@@ -166,7 +166,7 @@ router.get('/publicFeed', async (req, res) => {
 /**
  * Get all time capsules that I am subscribed to.
  */
-router.get('/subscribed', async (req, res) => {
+router.get('/subscribed', requireAuth, async (req, res) => {
 	let ownerID = req.userId;
 	let subscribedCapsules = await GetSubcribedTimeCapsules(ownerID);
 	res.status(200).send({
@@ -202,7 +202,7 @@ router.post('/search', async (req, res) => {
 /**
  * Subscribe / Unsubscribe.
  */
-router.get('/:id/toggleSubscription', async (req, res) => {
+router.get('/:id/toggleSubscription', requireAuth, async (req, res) => {
 	let timeCapsuleID = req.params.id;
 	if (!ObjectId.isValid(timeCapsuleID))
 		return res.status(400).send({
@@ -238,7 +238,7 @@ router.get('/:id/toggleSubscription', async (req, res) => {
 /**
  * Add / remove reaction to time capsule.
  */
-router.get('/:id/react/:reaction', async (req, res) => {
+router.get('/:id/react/:reaction', requireAuth, async (req, res) => {
 	let timeCapsuleID = req.params.id;
 	let reaction = req.params.reaction;
 
