@@ -3,7 +3,7 @@ import firebase from '../services/firebase';
 
 //this route is for development purposes so we don't have to request a firebase token each time.
 //it expects that the user id is located in the Authorization header.
-export const devAuthRouter = async (req: express.Request, res: express.Response, next) => {
+export const authRouter = async (req: express.Request, res: express.Response, next) => {
     if (!req.headers.authorization) {
         // if the token is missing, continue. This is the case for guest user.
         return next();
@@ -21,3 +21,9 @@ export const devAuthRouter = async (req: express.Request, res: express.Response,
     }
     next();
 };
+
+export const requireAuth = (req: express.Request, res: express.Response, next) => {
+    if (!req.userId)
+        return res.status(403).send({ code: "authentication_required", message: "To call this route you must be authenticated" });
+    next();
+}

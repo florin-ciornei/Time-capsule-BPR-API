@@ -11,7 +11,7 @@ import TagController from './controllers/tagController';
 import NotificationController from './controllers/notificationController';
 
 //router imports
-import { devAuthRouter } from './routers/authRouters';
+import { authRouter } from './routers/authRouters';
 
 const app = express();
 
@@ -21,7 +21,7 @@ app.get("/", (req, res) => { res.send("BPR TimeCapsule API test ci cd with tests
 app.use(cors()); //allow all origins to make requests to the API
 app.use('/doc', express.static('doc')); //API documentation
 app.use(bodyParser.json()); //parse for the JSON body
-app.use(devAuthRouter); //authorization header
+app.use(authRouter); //authorization header
 
 
 //add controllers to express app
