@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3e0f77f8-a7bd-4ed8-ba7a-b3a75d20350f",
+		"_postman_id": "28769912-9549-42dc-87e8-ca1c426db89b",
 		"name": "BPR",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -223,13 +223,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{apiUrl}}/group/createGroup",
+							"raw": "{{apiUrl}}/group",
 							"host": [
 								"{{apiUrl}}"
 							],
 							"path": [
-								"group",
-								"createGroup"
+								"group"
 							]
 						}
 					},
@@ -250,13 +249,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{apiUrl}}/group/updateGroup/609fceb251d86e288c908981",
+							"raw": "{{apiUrl}}/group/609fceb251d86e288c908981",
 							"host": [
 								"{{apiUrl}}"
 							],
 							"path": [
 								"group",
-								"updateGroup",
 								"609fceb251d86e288c908981"
 							]
 						}
@@ -269,13 +267,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{apiUrl}}/group/getMyGroups",
+							"raw": "{{apiUrl}}/group/all",
 							"host": [
 								"{{apiUrl}}"
 							],
 							"path": [
 								"group",
-								"getMyGroups"
+								"all"
 							]
 						}
 					},
@@ -287,13 +285,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{apiUrl}}/group/deleteGroup/6048887b0b11c50618c10729",
+							"raw": "{{apiUrl}}/group/delete/6048887b0b11c50618c10729",
 							"host": [
 								"{{apiUrl}}"
 							],
 							"path": [
 								"group",
-								"deleteGroup",
+								"delete",
 								"6048887b0b11c50618c10729"
 							]
 						},
@@ -319,13 +317,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{apiUrl}}/group/findGroup/604889f69c1913359426600c",
+							"raw": "{{apiUrl}}/group/604889f69c1913359426600c",
 							"host": [
 								"{{apiUrl}}"
 							],
 							"path": [
 								"group",
-								"findGroup",
 								"604889f69c1913359426600c"
 							]
 						}

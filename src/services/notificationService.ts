@@ -4,29 +4,6 @@ import NotificationModel, { Notification } from '../schemas/notificationSchema';
 import timeCapsuleSchema from '../schemas/timeCapsuleSchema';
 import TimeCapsulenModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
 
-export const GetAllNotificationsService = async (req: Request<ParamsDictionary, any, any, QueryString.ParsedQs, Record<string, any>>) => {
-   	const resultsPerPage = 20;
-	let page = parseInt(req.query.page as string);
-	if (isNaN(page)) page = 0;
-
-	let notifications = await NotificationModel.find({ toUser: req.userId })
-		.populate("byUser", "_id name profilePictureUrl")
-		.populate("group", "_id name")
-		.populate("timeCapsule", "_id name openData description backgroundType")
-		.sort({ time: -1 })
-		.skip(page * resultsPerPage)
-		.limit(resultsPerPage)
-		.lean();
-
-	notifications.forEach((n) => {
-		delete n.__v;
-		delete n._id;
-		delete n.toUser;
-	})
-
-    return notifications;    
-}
-
 export const SendAddedToGroupNotifications = async (groupId: string, userIds: string[], byUserId: string) => {
     for (let i = 0; i < userIds.length; i++) {
         let userId = userIds[i];
