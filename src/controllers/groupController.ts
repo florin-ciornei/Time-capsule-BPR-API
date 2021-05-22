@@ -1,30 +1,29 @@
 import * as express from 'express';
 import * as mongoose from 'mongoose';
-import { idText } from 'typescript';
-import GroupModel, { Group } from '../schemas/groupSchema';
-import UserModel, { User } from "../schemas/userSchema";
-import NotificationModel, { Notification } from "../schemas/notificationSchema";
+import { requireAuth } from '../routers/authRouters';
+import { CreateGroup, DeleteGroup, GetAllUserGroups, GetGroupById, IsGroupNameUnique, LeaveGroup, UpdateGroup } from '../services/groupService';
 
 const ObjectId = mongoose.Types.ObjectId;
-import { SendAddedToGroupNotifications } from '../services/notificationService';
-
-
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+// all the routes related to group should have authentiation
+router.use(requireAuth);
+
+/**
+ * Create group.
+ */
+router.post('/', requireAuth, async (req, res) => {
     let name: string = req.body.name;
     let users: string[] = req.body.users;
-    let owner: string = req.userId;
-    let usersCount: number = users.length;
 
-    let group = await GroupModel.create({
-        name: name,
-        users: users,
-        owner: owner,
-        usersCount: usersCount
-    });
+    if (!(await IsGroupNameUnique(name, req.userId)))
+        return res.status(400).send({
+            status: "error",
+            code: "name_not_unique",
+            message: "You already have a group with this name!"
+        });
 
-    SendAddedToGroupNotifications(group._id, users, req.userId);
+    let group = await CreateGroup(name, users, req.userId);
 
     res.status(200).send({
         status: 'success',
@@ -36,9 +35,14 @@ router.post('/', async (req, res) => {
 router.put('/leaveGroup/:groupId', async (req, res) => {
     let groupId = req.params.groupId;
 
-    await GroupModel.updateOne({ _id: groupId }, { $pull: { users: req.userId } });
-    await NotificationModel.deleteOne({ toUser: req.userId, group: groupId, type: "addedToGroup" });
+    if (!ObjectId.isValid(groupId))
+        return res.status(400).send({
+            status: "error",
+            code: "invalid_id",
+            message: "Group id is not a valid id"
+        });
 
+    await LeaveGroup(groupId, req.userId);
     res.status(200).send({
         status: 'success',
         message: 'Group left, notification deleted!',
@@ -49,24 +53,16 @@ router.put('/:id', async (req, res) => {
     let groupId = req.params.id;
     let name: string = req.body.name;
     let users: string[] = req.body.users;
-    let usersCount = users.length;
     let owner: string = req.userId;
 
     if (!ObjectId.isValid(groupId))
         return res.status(400).send({
             status: "error",
+            code: "invalid_id",
             message: "Group id is not a valid id"
         });
 
-    let oldGroup = await GroupModel.findOne({ _id: req.params.id, owner: req.userId })
-        .select("-_id -name -owner -usersCount -__v").lean();
-
-    let updatedGroup = await GroupModel.findOneAndUpdate(
-        { _id: groupId, owner: owner },
-        { name: name, users: users, usersCount: usersCount },
-        { new: true });
-
-    SendAddedToGroupNotifications(updatedGroup._id, users, req.userId);
+    let updatedGroup = await UpdateGroup(groupId, owner, name, users);
 
     res.status(200).send({
         status: 'success',
@@ -76,8 +72,16 @@ router.put('/:id', async (req, res) => {
 });
 
 router.delete('/delete/:id', async (req, res) => {
-    let result = await GroupModel.deleteOne({ _id: req.params.id, owner: req.userId });
-    if (result.n === 1) {
+    let groupId = req.params.id;
+    if (!ObjectId.isValid(groupId))
+        return res.status(400).send({
+            status: "error",
+            code: "invalid_id",
+            message: "Group id is not a valid id"
+        });
+
+    let result = await DeleteGroup(groupId, req.userId);
+    if (result) {
         res.status(200).send({
             status: 'success',
             message: 'Group deleted!',
@@ -91,7 +95,7 @@ router.delete('/delete/:id', async (req, res) => {
 });
 
 router.get("/all", async (req, res) => {
-    let groups = await GroupModel.find({ owner: req.userId }).select("-users -__v -owner").lean();
+    let groups = await GetAllUserGroups(req.userId);
     res.status(200).send({
         status: 'success',
         groups: groups,
@@ -100,14 +104,15 @@ router.get("/all", async (req, res) => {
 });
 
 router.get("/:id", async (req, res) => {
-    if (!ObjectId.isValid(req.params.id))
+    let groupId = req.params.id;
+    if (!ObjectId.isValid(groupId))
         return res.status(400).send({
             status: "error",
+            code: "invalid_id",
             message: "Group id is not a valid id"
         });
 
-    let group = await GroupModel.findOne({ _id: req.params.id, owner: req.userId })
-        .populate("users").select("-__v -owner").lean();
+    let group = await GetGroupById(groupId, req.userId);
 
     if (!group)
         return res.status(400).send({
