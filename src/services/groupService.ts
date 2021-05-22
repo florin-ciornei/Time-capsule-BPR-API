@@ -24,9 +24,6 @@ export const LeaveGroup = async (groupId: string, userId: string) => {
 }
 
 export const UpdateGroup = async (groupId: string, userId: string, groupName: string, users: string[]): Promise<Group> => {
-	let oldGroup = await GroupModel.findOne({ _id: groupId, owner: userId })
-		.select("-_id -name -owner -usersCount -__v").lean();
-
 	let updatedGroup = await GroupModel.findOneAndUpdate(
 		{ _id: groupId, owner: userId },
 		{ name: groupName, users: users, usersCount: users.length },
