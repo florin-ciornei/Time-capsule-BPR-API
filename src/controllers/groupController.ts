@@ -7,24 +7,15 @@ import NotificationModel, { Notification } from "../schemas/notificationSchema";
 
 const ObjectId = mongoose.Types.ObjectId;
 import { SendAddedToGroupNotifications } from '../services/notificationService';
+import * as GroupService from '../services/groupService';
 
 
 const router = express.Router();
 
-router.post('/', async (req, res) => {
-    let name: string = req.body.name;
-    let users: string[] = req.body.users;
-    let owner: string = req.userId;
-    let usersCount: number = users.length;
+router.post('/createGroup', async (req, res) => {
+    let group = GroupService.CreateGroup(req);
 
-    let group = await GroupModel.create({
-        name: name,
-        users: users,
-        owner: owner,
-        usersCount: usersCount
-    });
-
-    SendAddedToGroupNotifications(group._id, users, req.userId);
+    SendAddedToGroupNotifications(group._id, group.users, group.owner);
 
     res.status(200).send({
         status: 'success',
@@ -34,10 +25,7 @@ router.post('/', async (req, res) => {
 });
 
 router.put('/leaveGroup/:groupId', async (req, res) => {
-    let groupId = req.params.groupId;
-
-    await GroupModel.updateOne({ _id: groupId }, { $pull: { users: req.userId } });
-    await NotificationModel.deleteOne({ toUser: req.userId, group: groupId, type: "addedToGroup" });
+    GroupService.LeaveGroup(req);
 
     res.status(200).send({
         status: 'success',
@@ -45,28 +33,20 @@ router.put('/leaveGroup/:groupId', async (req, res) => {
     });
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/updateGroup/:id', async (req, res) => {
     let groupId = req.params.id;
-    let name: string = req.body.name;
-    let users: string[] = req.body.users;
-    let usersCount = users.length;
-    let owner: string = req.userId;
 
     if (!ObjectId.isValid(groupId))
+    {
         return res.status(400).send({
             status: "error",
             message: "Group id is not a valid id"
         });
+    }
+    
+    let updatedGroup = GroupService.UpdateGroup(req);
 
-    let oldGroup = await GroupModel.findOne({ _id: req.params.id, owner: req.userId })
-        .select("-_id -name -owner -usersCount -__v").lean();
-
-    let updatedGroup = await GroupModel.findOneAndUpdate(
-        { _id: groupId, owner: owner },
-        { name: name, users: users, usersCount: usersCount },
-        { new: true });
-
-    SendAddedToGroupNotifications(updatedGroup._id, users, req.userId);
+    SendAddedToGroupNotifications(updatedGroup._id, updatedGroup.users, updatedGroup.owner);
 
     res.status(200).send({
         status: 'success',
@@ -75,8 +55,9 @@ router.put('/:id', async (req, res) => {
     });
 });
 
-router.delete('/delete/:id', async (req, res) => {
-    let result = await GroupModel.deleteOne({ _id: req.params.id, owner: req.userId });
+router.delete('/deleteGroup/:id', async (req, res) => {
+    let result = GroupService.DeleteGroup(req);
+
     if (result.n === 1) {
         res.status(200).send({
             status: 'success',
@@ -90,8 +71,9 @@ router.delete('/delete/:id', async (req, res) => {
     }
 });
 
-router.get("/all", async (req, res) => {
-    let groups = await GroupModel.find({ owner: req.userId }).select("-users -__v -owner").lean();
+router.get("/getMyGroups", async (req, res) => {
+    let groups = GroupService.GetMyGroups(req);
+
     res.status(200).send({
         status: 'success',
         groups: groups,
@@ -99,15 +81,16 @@ router.get("/all", async (req, res) => {
     });
 });
 
-router.get("/:id", async (req, res) => {
-    if (!ObjectId.isValid(req.params.id))
+router.get("/findGroup/:id", async (req, res) => {
+    let groupId = req.params.id;
+
+    if (!ObjectId.isValid(groupId))
         return res.status(400).send({
             status: "error",
             message: "Group id is not a valid id"
         });
 
-    let group = await GroupModel.findOne({ _id: req.params.id, owner: req.userId })
-        .populate("users").select("-__v -owner").lean();
+    let group = GroupService.FindGroup(req);
 
     if (!group)
         return res.status(400).send({
