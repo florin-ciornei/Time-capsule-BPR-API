@@ -3,6 +3,8 @@ import app from '../app';
 import * as mongoose from 'mongoose';
 import UserModel, { User } from "../schemas/userSchema";
 import TimeCapsuleModel, { TimeCapsule } from "../schemas/timeCapsuleSchema";
+import NotificationModel, { Notification } from "../schemas/notificationSchema";
+import GroupSchema, { Group } from "../schemas/groupSchema";
 
 // before running the tests in this file, connect to mongodb, use bprTest database, and clear the existing collections that may remain filled from previous tests
 beforeAll(async (done) => {
@@ -16,6 +18,12 @@ beforeAll(async (done) => {
 	);
 	await UserModel.deleteMany({});
 	await TimeCapsuleModel.deleteMany({});
+	await NotificationModel.deleteMany({});
+	await GroupSchema.deleteMany({});
+
+	await UserModel.create({ email: "email1", name: "asd" });
+	await UserModel.create({ email: "email2", name: "dfg" });
+
 	done();
 });
 
@@ -31,6 +39,7 @@ describe('Test UseController', () => {
 		expect(result.body.code).toBe("existing_id");
 		expect(result.body.status).toBe("error");
 	});
+	//...
 });
 
 afterAll(async (done) => {
