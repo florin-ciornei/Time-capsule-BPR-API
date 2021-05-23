@@ -45,7 +45,6 @@ export const SendAddedToAllowedUsersNotifications = async (capsuleId: string, us
     for (let i = 0; i < userIds.length; i++) {
         let userId = userIds[i];
         let existingNotification = await NotificationModel.countDocuments({ toUser: userId, timeCapsule: capsuleId, type: "addedToAllowedUsers" });
-        console.log(existingNotification);
         // dont add notification if it already exists for this user
         if (existingNotification > 0)
             continue;
@@ -122,6 +121,7 @@ export const sendFollowNotification = async (byUserId: string, toUserId: string)
 }
 
 if (process.env.NODE_ENV != "test") {
+    console.log("Start lookin for opened capsules...");
     setInterval(() => {
         SendTimeCapsuleOpenNotification();
     }, 10000);
