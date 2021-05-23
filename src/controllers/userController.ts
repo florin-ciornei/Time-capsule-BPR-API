@@ -25,11 +25,12 @@ router.post('/register', requireAuth, async (req, res) => {
 		});
 	}
 
-	await CreateUserAccount(req.userId, email, name);
+	const user = await CreateUserAccount(req.userId, email, name);
 
 	res.status(200).send({
 		status: 'success',
-		message: 'User registered!'
+		message: 'User registered!',
+		user: user
 	});
 });
 

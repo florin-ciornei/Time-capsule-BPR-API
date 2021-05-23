@@ -10,12 +10,13 @@ export const CheckUserIdInUse = async (firebaseUserId: string): Promise<boolean>
 	return (await UserModel.find({ _id: firebaseUserId }).lean()).length > 0;
 }
 
-export const CreateUserAccount = async (firebaaseUserId: string, email: string, name: string) => {
-	await UserModel.create({
+export const CreateUserAccount = async (firebaaseUserId: string, email: string, name: string): Promise<User> => {
+	const user = await UserModel.create({
 		_id: firebaaseUserId,
 		name: name,
 		email: email
 	});
+	return user;
 }
 
 export const SearchUsers = async (query: string, userId: string): Promise<LeanDocument<User>[]> => {

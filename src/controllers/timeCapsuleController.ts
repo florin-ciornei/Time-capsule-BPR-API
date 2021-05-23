@@ -180,7 +180,7 @@ router.get('/subscribed', requireAuth, async (req, res) => {
  * Seach time capsules by tags, content, keywords contained in description or name, open/closed and opening date/time.
  */
 router.post('/search', async (req, res) => {
-	let keyword = req.body.keyword;
+	let keyword = req.body.keyword as string;
 	let searchInTags = req.body.search_in_tags;
 	let searchInName = req.body.search_in_name;
 	let searchInDescription = req.body.search_in_description;
@@ -188,14 +188,13 @@ router.post('/search', async (req, res) => {
 	let open_closed = req.body.open_closed;
 	let opening_date_from = req.body.opening_date_from;
 	let opening_date_to = req.body.opening_date_to;
-	let capsulesFound = [];
 
 	let timeCapsules = await GetSearchTimeCapsules(req.userId, keyword, searchInTags, searchInName, searchInDescription, contents, open_closed, opening_date_from, opening_date_to);
 
 	res.status(200).send({
 		status: 'success',
-		results: capsulesFound.length,
-		timeCapsules: capsulesFound
+		results: timeCapsules.length,
+		timeCapsules: timeCapsules
 	});
 });
 
