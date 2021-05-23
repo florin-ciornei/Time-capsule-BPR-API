@@ -107,7 +107,7 @@ const SendTimeCapsuleOpenNotification = async () => {
     await timeCapsuleSchema.updateMany({ openDate: { $lt: new Date() }, openNotificationSent: { $in: [false, null, undefined] } }, { openNotificationSent: true })
 }
 
-export const sendFollowNotification = async (byUserId: string, toUserId: string) => {
+export const SendFollowNotification = async (byUserId: string, toUserId: string) => {
     let notificationExists = (await NotificationModel.countDocuments({ toUser: toUserId, byUser: byUserId, type: "follow" })) > 0;
     if (notificationExists)
         return;
