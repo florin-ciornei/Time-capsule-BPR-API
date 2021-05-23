@@ -7,7 +7,10 @@ import NotificationModel, { Notification } from "../schemas/notificationSchema";
 import { LeanDocument } from 'mongoose';
 import { database } from 'firebase-admin';
 
-export const CreateTimeCapsule = async (tags: string[], name: string, openDate: Date, description: string, isPrivate: boolean, allowedUsers: string[], allowedGroups: string[], ownerId: string, location: any, backgroundType: number, files: Express.Multer.File[]): Promise<TimeCapsule> => {
+export const CreateTimeCapsule = async (tags: string[], name: string, openDate: Date, 
+	description: string, isPrivate: boolean, allowedUsers: string[], 
+	allowedGroups: string[], ownerId: string, location: any, backgroundType: number, 
+	files: Express.Multer.File[]): Promise<TimeCapsule> => {
 
 	//TODO validate fields
 
