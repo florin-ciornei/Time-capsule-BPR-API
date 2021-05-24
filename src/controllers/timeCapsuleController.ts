@@ -18,7 +18,7 @@ const upload = multer({
 router.post('/', requireAuth, upload.array('contents'), async (req, res) => {
 	let name: string = req.body.name;
 	let description: string = req.body.description;
-	let openDate: Date = req.body.openDate;
+	let openDate: Date = new Date(req.body.openDate);
 	let isPrivate: boolean = req.body.isPrivate;
 	let tags: string[] = req.body.tags;
 	let allowedUsers: string[] = req.body.allowedUsers;
@@ -28,6 +28,14 @@ router.post('/', requireAuth, upload.array('contents'), async (req, res) => {
 		lon: req.body.lon
 	};
 	let backgroundType: number = req.body.backgroundType;
+
+	if (openDate < new Date()) {
+		return res.status(400).send({
+			status: "error",
+			code: "invalid_open_data",
+			message: "Open date must be in the future!"
+		})
+	}
 
 	let timeCapsule = await CreateTimeCapsule(tags, name, openDate, description, isPrivate, allowedUsers, allowedGroups, req.userId, location, backgroundType, req.files as Express.Multer.File[]);
 
