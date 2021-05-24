@@ -49,7 +49,9 @@ export const CreateTimeCapsule = async (tags: string[], name: string, openDate: 
 	}
 	timeCapsule.contents = contents;
 	await timeCapsule.save();
-	SendAddedToAllowedUsersNotifications(timeCapsule._id, allowedUsers, ownerId);
+
+	if (process.env.NODE_ENV != "test")
+		SendAddedToAllowedUsersNotifications(timeCapsule._id, allowedUsers, ownerId);
 
 	return timeCapsule
 }
@@ -59,11 +61,11 @@ export const LeaveAllowedUsers = async (capsuleId: string, userId: string) => {
 	await NotificationModel.deleteOne({ toUser: userId, timeCapsule: capsuleId, type: "addedToAllowedUsers" });
 }
 
-export const UpdateTimeCapsule = async (timeCapsuleID: string, ownerID: string, name: string, 
-	allowedUsers: string[], allowedGroups: string[]): Promise<TimeCapsule> => {
-	let timeCapsule = await TimeCapsuleModel.findOneAndUpdate({ _id: timeCapsuleID, owner: ownerID }, 
-		{ name: name, allowedUsers: allowedUsers, allowedGroups: allowedGroups }, { new: true });
-	SendAddedToAllowedUsersNotifications(timeCapsule._id, allowedUsers, ownerID);
+
+export const UpdateTimeCapsule = async (timeCapsuleID: string, ownerID: string, name: string, allowedUsers: string[], allowedGroups: string[]): Promise<TimeCapsule> => {
+	let timeCapsule = await TimeCapsuleModel.findOneAndUpdate({ _id: timeCapsuleID, owner: ownerID }, { name: name, allowedUsers: allowedUsers, allowedGroups: allowedGroups }, { new: true });
+	if (process.env.NODE_ENV != "test")
+		SendAddedToAllowedUsersNotifications(timeCapsule._id, allowedUsers, ownerID);
 	return timeCapsule;
 }
 

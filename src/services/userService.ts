@@ -10,12 +10,13 @@ export const CheckUserIdInUse = async (firebaseUserId: string): Promise<boolean>
 	return (await UserModel.find({ _id: firebaseUserId }).lean()).length > 0;
 }
 
-export const CreateUserAccount = async (firebaaseUserId: string, email: string, name: string) => {
-	await UserModel.create({
+export const CreateUserAccount = async (firebaaseUserId: string, email: string, name: string): Promise<User> => {
+	const user = await UserModel.create({
 		_id: firebaaseUserId,
 		name: name,
 		email: email
 	});
+	return user;
 }
 
 export const SearchUsers = async (query: string, userId: string): Promise<LeanDocument<User>[]> => {
@@ -41,6 +42,8 @@ export const GetMyProfile = async (userId: string): Promise<any> => {
 
 export const GetUserProfile = async (userId: string, requestingUserId: string): Promise<any> => {
 	let user = await UserModel.findById(userId).lean();
+	if (!user)
+		return;
 
 	user.isFollowedByMe = user.followedByUsers ? user.followedByUsers.includes(requestingUserId) : false;
 	user.followersCount = user.followedByUsers ? user.followedByUsers.length : 0;
@@ -79,10 +82,13 @@ export const DeleteUserProfile = async (userId: string) => {
 	await NotificationModel.deleteMany({ toUser: userId });
 	await TimeCapsuleModel.deleteMany({ owner: userId });
 	await GroupModel.deleteMany({ owner: userId });
-	try {
-		await firebase.admin.auth().deleteUser(userId);
-	} catch (e) {
-		console.log(e.code, e.message);
+
+	if (process.env.NODE_ENV != "test") {
+		try {
+			await firebase.admin.auth().deleteUser(userId);
+		} catch (e) {
+			console.log(e.code, e.message);
+		}
 	}
 }
 

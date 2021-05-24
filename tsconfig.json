@@ -9,6 +9,6 @@
 		"typeRoots": ["@types", "node_modules/@types"],
 		"allowSyntheticDefaultImports": true
 	},
-	"include": ["src/**/*.ts"],
+	"include": ["src/**/*.ts", "src/tests/user.test.ts", "src/tests/timeCapsule.test.ts", "src/tests/group.test.ts", "src/tests/tag.test.ts", "src/tests/notification.test.ts"],
 	"exclude": ["node_modules"]
 }
