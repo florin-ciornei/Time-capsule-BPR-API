@@ -155,6 +155,20 @@ router.delete('/', requireAuth, async (req, res) => {
  * Change profile picture.
  */
 router.put('/profileImage', requireAuth, upload.single('image'), async (req, res) => {
+	if (!req.file) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'missing_image',
+			message: 'Please attach an image'
+		});
+	}
+	if (req.file.size > 5000000) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'image_too_big',
+			message: 'File size cannot be more than 5mb'
+		});
+	}
 	let fileUrl = await UpdateProfilePicture(req.userId, req.file);
 	res.status(200).send({
 		status: 'success',

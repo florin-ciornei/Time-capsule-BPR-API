@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as mongoose from 'mongoose';
 import { requireAuth } from '../routers/authRouters';
-import { CreateGroup, DeleteGroup, GetAllUserGroups, GetGroupById, GetGroupsContainingMe, IsGroupNameUnique, LeaveGroup, UpdateGroup } from '../services/groupService';
+import { CountUserGroups, CreateGroup, DeleteGroup, GetAllUserGroups, GetGroupById, GetGroupsContainingMe, IsGroupNameUnique, LeaveGroup, UpdateGroup } from '../services/groupService';
 
 const ObjectId = mongoose.Types.ObjectId;
 const router = express.Router();
@@ -16,12 +16,37 @@ router.post('/', requireAuth, async (req, res) => {
 	let name: string = req.body.name;
 	let users: string[] = req.body.users;
 
-	if (!(await IsGroupNameUnique(name, req.userId)))
+	if (!(await IsGroupNameUnique(name, req.userId))) {
 		return res.status(400).send({
 			status: 'error',
 			code: 'name_not_unique',
 			message: 'You already have a group with this name!'
 		});
+	}
+
+	if ((await CountUserGroups(req.userId)) >= 100) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'group_number_exceeded',
+			message: 'You cannot have more than 100 groups!'
+		});
+	}
+
+	if (name.length > 24 || name.length < 1) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'name_length_out_of_bounds',
+			message: 'The group name should have 1-24 characters.'
+		});
+	}
+
+	if (users.length > 100) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'too_many_users',
+			message: 'The group cannot have more than 100 users.'
+		});
+	}
 
 	let group = await CreateGroup(name, users, req.userId);
 
@@ -64,6 +89,22 @@ router.put('/:id', async (req, res) => {
 			code: 'invalid_id',
 			message: 'Group id is not a valid id'
 		});
+
+	if (name.length > 24 || name.length < 1) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'name_length_out_of_bounds',
+			message: 'The group name should have 1-24 characters.'
+		});
+	}
+
+	if (users.length > 100) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'too_many_users',
+			message: 'The group cannot have more than 100 users.'
+		});
+	}
 
 	let updatedGroup = await UpdateGroup(groupId, owner, name, users);
 

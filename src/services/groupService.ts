@@ -7,6 +7,10 @@ export const IsGroupNameUnique = async (name: string, userId: string): Promise<b
 	return (await GroupModel.find({ name: name, owner: userId })).length == 0;
 };
 
+export const CountUserGroups = async (userId: string): Promise<number> => {
+	return await GroupModel.countDocuments({ owner: userId });
+};
+
 export const CreateGroup = async (name: string, users: string[], owner: string): Promise<Group> => {
 	let group = await GroupModel.create({
 		name: name,

@@ -53,6 +53,64 @@ router.post('/', requireAuth, upload.array('contents'), async (req, res) => {
 		});
 	}
 
+	if (name.length < 3 || name.length > 32) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'name_length_out_of_bounds',
+			message: 'The time capsule name should have 3-32 characters.'
+		});
+	}
+
+	if (description.length > 1000) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'description_length_out_of_bounds',
+			message: 'The time capsule description should have max 1000 characters.'
+		});
+	}
+
+	if (req.files.length > 20) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'contents_length_out_of_bounds',
+			message: 'A capsule cannot contain more than 20 files.'
+		});
+	}
+
+	for (let i = 0; i < req.files.length; i++) {
+		if (req.files[i].size > 500000000) {
+			return res.status(400).send({
+				status: 'error',
+				code: 'file_too_big',
+				message: 'A file cannot have more than 500mb.'
+			});
+		}
+	}
+
+	if (tags.length > 5) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'too_many_tags',
+			message: 'The time capsule should contain maximum 5 tags.'
+		});
+	}
+
+	if (allowedUsers.length > 100) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'too_many_allowed_users',
+			message: 'The time capsule cannot have more than 100 allowed users.'
+		});
+	}
+
+	if (allowedGroups.length > 10) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'too_many_groups',
+			message: 'The time capsule cannot have more than 10 groups.'
+		});
+	}
+
 	let timeCapsule = await CreateTimeCapsule(tags, name, openDate, description, isPrivate, allowedUsers, allowedGroups, req.userId, location, backgroundType, req.files as Express.Multer.File[]);
 
 	res.status(200).send({
@@ -93,6 +151,30 @@ router.put('/:id', requireAuth, async (req, res) => {
 			code: 'invalid_id',
 			message: 'Time capsule id is not a valid id'
 		});
+
+	if (name.length < 3 || name.length > 32) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'name_length_out_of_bounds',
+			message: 'The time capsule name should have 3-32 characters.'
+		});
+	}
+
+	if (allowedUsers.length > 100) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'too_many_allowed_users',
+			message: 'The time capsule cannot have more than 100 allowed users.'
+		});
+	}
+
+	if (allowedGroups.length > 10) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'too_many_groups',
+			message: 'The time capsule cannot have more than 10 groups.'
+		});
+	}
 
 	let timeCapsule = await UpdateTimeCapsule(capsuleId, ownerId, name, allowedUsers, allowedGroups);
 	res.status(200).send({
