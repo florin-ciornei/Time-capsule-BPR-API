@@ -3,21 +3,28 @@ import UserModel, { User } from '../schemas/userSchema';
 import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
 import { SendAddedToAllowedUsersNotifications } from './notificationService';
 import firebase from './firebaseService';
-import NotificationModel, { Notification } from "../schemas/notificationSchema";
+import NotificationModel, { Notification } from '../schemas/notificationSchema';
 import { LeanDocument } from 'mongoose';
 import { database } from 'firebase-admin';
 
-export const CreateTimeCapsule = async (tags: string[], name: string, openDate: Date, 
-	description: string, isPrivate: boolean, allowedUsers: string[], 
-	allowedGroups: string[], ownerId: string, location: any, backgroundType: number, 
-	files: Express.Multer.File[]): Promise<TimeCapsule> => {
-
+export const CreateTimeCapsule = async (
+	tags: string[],
+	name: string,
+	openDate: Date,
+	description: string,
+	isPrivate: boolean,
+	allowedUsers: string[],
+	allowedGroups: string[],
+	ownerId: string,
+	location: any,
+	backgroundType: number,
+	files: Express.Multer.File[]
+): Promise<TimeCapsule> => {
 	//TODO validate fields
 
 	// Converts all tags to lower case before saving them
 	// ans storing the time capsule in the database
-	if (!tags)
-		tags = [];
+	if (!tags) tags = [];
 	tags.forEach((tag, index) => {
 		tags[index] = tag.toLowerCase();
 	});
@@ -50,24 +57,21 @@ export const CreateTimeCapsule = async (tags: string[], name: string, openDate: 
 	timeCapsule.contents = contents;
 	await timeCapsule.save();
 
-	if (process.env.NODE_ENV != "test")
-		SendAddedToAllowedUsersNotifications(timeCapsule._id, allowedUsers, ownerId);
+	if (process.env.NODE_ENV != 'test') SendAddedToAllowedUsersNotifications(timeCapsule._id, allowedUsers, ownerId);
 
-	return timeCapsule
-}
+	return timeCapsule;
+};
 
 export const LeaveAllowedUsers = async (capsuleId: string, userId: string) => {
 	await TimeCapsuleModel.updateOne({ _id: capsuleId }, { $pull: { allowedUsers: userId } });
-	await NotificationModel.deleteOne({ toUser: userId, timeCapsule: capsuleId, type: "addedToAllowedUsers" });
-}
-
+	await NotificationModel.deleteOne({ toUser: userId, timeCapsule: capsuleId, type: 'addedToAllowedUsers' });
+};
 
 export const UpdateTimeCapsule = async (timeCapsuleID: string, ownerID: string, name: string, allowedUsers: string[], allowedGroups: string[]): Promise<TimeCapsule> => {
 	let timeCapsule = await TimeCapsuleModel.findOneAndUpdate({ _id: timeCapsuleID, owner: ownerID }, { name: name, allowedUsers: allowedUsers, allowedGroups: allowedGroups }, { new: true });
-	if (process.env.NODE_ENV != "test")
-		SendAddedToAllowedUsersNotifications(timeCapsule._id, allowedUsers, ownerID);
+	if (process.env.NODE_ENV != 'test') SendAddedToAllowedUsersNotifications(timeCapsule._id, allowedUsers, ownerID);
 	return timeCapsule;
-}
+};
 
 export const DeleteTimeCapsule = async (capsuleId: string, ownerId: string): Promise<boolean> => {
 	let result = await TimeCapsuleModel.deleteOne({
@@ -75,13 +79,13 @@ export const DeleteTimeCapsule = async (capsuleId: string, ownerId: string): Pro
 		owner: ownerId
 	});
 	return result.n == 1;
-}
+};
 
 export const GetMyTimeCapsules = async (userId: string): Promise<LeanDocument<TimeCapsule>[]> => {
-	let timeCapsules = await TimeCapsuleModel.find({ owner: userId }).populate("owner", "name").lean();
+	let timeCapsules = await TimeCapsuleModel.find({ owner: userId }).populate('owner', 'name').lean();
 	timeCapsules = timeCapsules.map((timeCapsule) => parseTimeCapsule(timeCapsule as TimeCapsule, userId, false));
 	return timeCapsules;
-}
+};
 
 export const GetUsersTimeCapsules = async (fromUserId: string, requestingUserId: string): Promise<LeanDocument<TimeCapsule>[]> => {
 	// find the ids of the group this user is added to, they are used to select capsules that have these group ids
@@ -102,15 +106,16 @@ export const GetUsersTimeCapsules = async (fromUserId: string, requestingUserId:
 			// or the capsules that are shared with a group in which you are included
 			{ allowedGroups: { $in: myGroupIds } }
 		]
-	}).populate("owner", "name").lean();
+	})
+		.populate('owner', 'name')
+		.lean();
 
 	timeCapsules = timeCapsules.map((timeCapsule) => parseTimeCapsule(timeCapsule as TimeCapsule, requestingUserId, false));
 
 	return timeCapsules;
-}
+};
 
-export const GetFeed = async (userId: string, page: number, resultsPerPage: number, 
-	status: string): Promise<LeanDocument<TimeCapsule>[]> => {
+export const GetFeed = async (userId: string, page: number, resultsPerPage: number, status: string): Promise<LeanDocument<TimeCapsule>[]> => {
 	// find the ids of the group this user is added to, they are used to select capsules that have these group ids
 	let myGroups = await GroupModel.find({ users: userId }).lean();
 	let myGroupIds = myGroups.map((g) => g._id);
@@ -119,8 +124,6 @@ export const GetFeed = async (userId: string, page: number, resultsPerPage: numb
 		followedByUsers: userId
 	}).lean();
 	let usersFollowedByMeIds = usersFollowedByMe.map((u) => u._id);
-
-
 
 	let filter = {
 		owner: { $in: usersFollowedByMeIds },
@@ -138,67 +141,79 @@ export const GetFeed = async (userId: string, page: number, resultsPerPage: numb
 		]
 	};
 
-	if (status == "opened") {
-		filter["openDate"] = { $lt: new Date() };
+	if (status == 'opened') {
+		filter['openDate'] = { $lt: new Date() };
 	}
 
-	if (status == "closed") {
-		filter["openDate"] = { $gt: new Date() };
+	if (status == 'closed') {
+		filter['openDate'] = { $gt: new Date() };
 	}
 
 	let timeCapsules = await TimeCapsuleModel.find(filter)
-		.populate("owner", "name")
+		.populate('owner', 'name')
 		.sort({ createDate: 'desc' })
 		.skip(page * resultsPerPage)
 		.limit(resultsPerPage)
 		.lean();
 	timeCapsules = timeCapsules.map((timeCapsule) => parseTimeCapsule(timeCapsule as TimeCapsule, userId, false));
 	return timeCapsules;
-}
+};
 
-export const GetPublicFeed = async (status: string, page: number, resultsPerPage: number,): Promise<LeanDocument<TimeCapsule>[]> => {
+export const GetPublicFeed = async (status: string, page: number, resultsPerPage: number): Promise<LeanDocument<TimeCapsule>[]> => {
 	let filter = {
 		isPrivate: false,
 		allowedGroups: [],
 		allowedUsers: []
 	};
 
-	if (status == "opened") {
-		filter["openDate"] = { $lt: new Date() };
+	if (status == 'opened') {
+		filter['openDate'] = { $lt: new Date() };
 	}
 
-	if (status == "closed") {
-		filter["openDate"] = { $gt: new Date() };
+	if (status == 'closed') {
+		filter['openDate'] = { $gt: new Date() };
 	}
 
 	let timeCapsules = await TimeCapsuleModel.find(filter)
-		.populate("owner", "name")
+		.populate('owner', 'name')
 		.sort({ createDate: 'desc' })
 		.skip(page * resultsPerPage)
 		.limit(resultsPerPage)
 		.lean();
 	timeCapsules = timeCapsules.map((timeCapsule) => parseTimeCapsule(timeCapsule as TimeCapsule, undefined, false));
 	return timeCapsules;
-}
+};
 
 export const GetTimeCapsuleByIdAndUserId = async (timeCapsuleId: string, ownerId: string): Promise<any> => {
 	let timeCapsule = await TimeCapsuleModel.findOne({
 		_id: timeCapsuleId,
 		owner: ownerId
-	}).populate("owner", "name").lean();
-	return parseTimeCapsule(timeCapsule as TimeCapsule, ownerId, false)
-}
+	})
+		.populate('owner', 'name')
+		.lean();
+	return parseTimeCapsule(timeCapsule as TimeCapsule, ownerId, false);
+};
 
 export const GetSubcribedTimeCapsules = async (userId: string): Promise<TimeCapsule[]> => {
 	let subscribedCapsules = await TimeCapsuleModel.find({
 		subscribedUsers: userId
-	}).populate("owner", "name").lean();
+	})
+		.populate('owner', 'name')
+		.lean();
 	return subscribedCapsules.map((timeCapsule) => parseTimeCapsule(timeCapsule as TimeCapsule, userId, false));
-}
+};
 
-export const GetSearchTimeCapsules = async (userId: string, keyword: string, searchInTags: boolean, 
-	searchInName: boolean, searchInDescription: boolean, contents: string, open_closed: string, 
-	opening_date_from: Date, opening_date_to: Date): Promise<TimeCapsule[]> => {
+export const GetSearchTimeCapsules = async (
+	userId: string,
+	keyword: string,
+	searchInTags: boolean,
+	searchInName: boolean,
+	searchInDescription: boolean,
+	contents: string,
+	open_closed: string,
+	opening_date_from: Date,
+	opening_date_to: Date
+): Promise<TimeCapsule[]> => {
 	// find the ids of the group this user is added to, they are used to select capsules that have these group ids
 	let myGroups = await GroupModel.find({ users: userId }).lean();
 	let myGroupIds = myGroups.map((g) => g._id);
@@ -258,13 +273,13 @@ export const GetSearchTimeCapsules = async (userId: string, keyword: string, sea
 		}
 	}
 
-	let capsulesFound = await TimeCapsuleModel.find(filter).populate("owner", "name").lean();
+	let capsulesFound = await TimeCapsuleModel.find(filter).populate('owner', 'name').lean();
 	return capsulesFound.map((timeCapsule) => parseTimeCapsule(timeCapsule as TimeCapsule, userId, false));
-}
+};
 
 export const GetTimeCapsuleById = async (capsuleId: string): Promise<any> => {
 	return await TimeCapsuleModel.find({ _id: capsuleId });
-}
+};
 
 export const ToggleSubscribedUser = async (capsuleId: string, userId: string, toggle: boolean) => {
 	if (toggle) {
@@ -276,20 +291,19 @@ export const ToggleSubscribedUser = async (capsuleId: string, userId: string, to
 			$pull: { subscribedUsers: userId }
 		});
 	}
-}
+};
 
 export const ToggleReaction = async (capsuleId: string, userId: string, reaction: string) => {
-	if (reaction == "remove") {
+	if (reaction == 'remove') {
 		await TimeCapsuleModel.findByIdAndUpdate(capsuleId, { $pull: { reactions: { userId: userId } } }, { multi: true });
 	} else {
 		// remove other reactions if they are present
-		await TimeCapsuleModel.findByIdAndUpdate(capsuleId, { $pull: { reactions: { userId: userId } } }, { multi: true }); 
+		await TimeCapsuleModel.findByIdAndUpdate(capsuleId, { $pull: { reactions: { userId: userId } } }, { multi: true });
 		await TimeCapsuleModel.findByIdAndUpdate(capsuleId, {
 			$push: { reactions: { reaction: reaction, userId: userId } }
 		});
 	}
-}
-
+};
 
 export enum Reaction {
 	LIKE = 'like',
@@ -306,7 +320,7 @@ export enum Reaction {
  * 2. Parse how many reactions does the time capsule have
  * 3. Detect my reaction to this time capsule
  * 4. Detect if the time capsule is opened
- * @param removePrivateData if we need to remove allowed users, 
+ * @param removePrivateData if we need to remove allowed users,
  * allowed groups and other private data to which only the owner has access
  */
 const parseTimeCapsule = (timeCapsule: TimeCapsule, requestingUserId: string, removePrivateData: boolean) => {

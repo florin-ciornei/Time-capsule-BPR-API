@@ -1,19 +1,16 @@
-
 import * as admin from 'firebase-admin';
 
 // Initialize firebase admin SDK
 admin.initializeApp({
-	credential: admin.credential.cert("./auth-development-25425-firebase-adminsdk-wpx5f-578f9f8761.json"),
-	storageBucket: "auth-development-25425.appspot.com"
+	credential: admin.credential.cert('./auth-development-25425-firebase-adminsdk-wpx5f-578f9f8761.json'),
+	storageBucket: 'auth-development-25425.appspot.com'
 });
 
 // Cloud storage
 const bucket = admin.storage().bucket();
 
 const uploadFileToBucket = async (file: Express.Multer.File, folder: string, uploadedFileName: string): Promise<string> => {
-
 	return new Promise((resolve, reject) => {
-
 		let newFileName = `capsuleContents/${folder}/${uploadedFileName}`;
 
 		let fileUpload = bucket.file(newFileName);
@@ -36,10 +33,10 @@ const uploadFileToBucket = async (file: Express.Multer.File, folder: string, upl
 
 		blobStream.end(file.buffer);
 	});
-}
+};
 
 export default {
 	admin,
 	bucket,
 	uploadFileToBucket
-}
+};

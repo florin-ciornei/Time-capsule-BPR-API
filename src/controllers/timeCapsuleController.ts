@@ -2,7 +2,23 @@ import * as express from 'express';
 import * as multer from 'multer';
 import * as mongoose from 'mongoose';
 import { SendAddedToAllowedUsersNotifications, SendSubScribeToTimeCapsuleNotification } from '../services/notificationService';
-import { CreateTimeCapsule, DeleteTimeCapsule, GetFeed, GetMyTimeCapsules, GetPublicFeed, GetSearchTimeCapsules, ToggleReaction, GetSubcribedTimeCapsules, GetTimeCapsuleById, GetTimeCapsuleByIdAndUserId, GetUsersTimeCapsules, LeaveAllowedUsers, Reaction, ToggleSubscribedUser, UpdateTimeCapsule } from '../services/timeCapsuleService';
+import {
+	CreateTimeCapsule,
+	DeleteTimeCapsule,
+	GetFeed,
+	GetMyTimeCapsules,
+	GetPublicFeed,
+	GetSearchTimeCapsules,
+	ToggleReaction,
+	GetSubcribedTimeCapsules,
+	GetTimeCapsuleById,
+	GetTimeCapsuleByIdAndUserId,
+	GetUsersTimeCapsules,
+	LeaveAllowedUsers,
+	Reaction,
+	ToggleSubscribedUser,
+	UpdateTimeCapsule
+} from '../services/timeCapsuleService';
 import { requireAuth } from '../routers/authRouters';
 
 const ObjectId = mongoose.Types.ObjectId;
@@ -31,10 +47,10 @@ router.post('/', requireAuth, upload.array('contents'), async (req, res) => {
 
 	if (openDate < new Date()) {
 		return res.status(400).send({
-			status: "error",
-			code: "invalid_open_data",
-			message: "Open date must be in the future!"
-		})
+			status: 'error',
+			code: 'invalid_open_data',
+			message: 'Open date must be in the future!'
+		});
 	}
 
 	let timeCapsule = await CreateTimeCapsule(tags, name, openDate, description, isPrivate, allowedUsers, allowedGroups, req.userId, location, backgroundType, req.files as Express.Multer.File[]);
@@ -51,13 +67,13 @@ router.put('/leaveAllowedUsers/:capsuleId', requireAuth, async (req, res) => {
 	if (!ObjectId.isValid(capsuleId))
 		return res.status(400).send({
 			status: 'error',
-			code: "invalid_id",
+			code: 'invalid_id',
 			message: 'Time capsule id is not a valid id'
 		});
 	await LeaveAllowedUsers(capsuleId, req.userId);
 	res.status(200).send({
 		status: 'success',
-		message: 'User was removed from the allowed users, the notification was deleted!',
+		message: 'User was removed from the allowed users, the notification was deleted!'
 	});
 });
 
@@ -74,7 +90,7 @@ router.put('/:id', requireAuth, async (req, res) => {
 	if (!ObjectId.isValid(capsuleId))
 		return res.status(400).send({
 			status: 'error',
-			code: "invalid_id",
+			code: 'invalid_id',
 			message: 'Time capsule id is not a valid id'
 		});
 
@@ -153,7 +169,6 @@ router.get('/feed', requireAuth, async (req, res) => {
 	});
 });
 
-
 /**
  * Get a lean list with a public feed.
  */
@@ -169,7 +184,6 @@ router.get('/publicFeed', async (req, res) => {
 		timeCapsules: timeCapsules
 	});
 });
-
 
 /**
  * Get all time capsules that I am subscribed to.
@@ -233,14 +247,13 @@ router.get('/:id/toggleSubscription', requireAuth, async (req, res) => {
 		});
 	} else {
 		ToggleSubscribedUser(timeCapsuleID, req.userId, true);
-		SendSubScribeToTimeCapsuleNotification(timeCapsuleID, req.userId)
+		SendSubScribeToTimeCapsuleNotification(timeCapsuleID, req.userId);
 		res.status(200).send({
 			status: 'success',
 			toggleAction: 'subscribed'
 		});
 	}
 });
-
 
 /**
  * Add / remove reaction to time capsule.
@@ -315,6 +328,5 @@ router.get('/:id', async (req, res) => {
 		timeCapsule: timeCapsule
 	});
 });
-
 
 export default router;

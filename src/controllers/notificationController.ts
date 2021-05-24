@@ -6,7 +6,7 @@ const router = express.Router();
 /**
  * Get all notifications for a user.
  */
-router.get("/", requireAuth, async (req, res) => {
+router.get('/', requireAuth, async (req, res) => {
 	const resultsPerPage = 20;
 	let page = parseInt(req.query.page as string);
 	if (isNaN(page)) page = 0;
@@ -14,9 +14,9 @@ router.get("/", requireAuth, async (req, res) => {
 	let notifications = await GetUserNotifications(page, resultsPerPage, req.userId);
 
 	res.json({
-		status: "success",
+		status: 'success',
 		results: notifications.length,
-		notifications: notifications,
+		notifications: notifications
 	});
 });
 

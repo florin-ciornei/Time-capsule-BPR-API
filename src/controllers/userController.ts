@@ -1,6 +1,18 @@
 import * as express from 'express';
 import * as multer from 'multer';
-import { CheckUserIdInUse, CreateUserAccount, DeleteProfilePicture, DeleteUserProfile, GetMyProfile, GetRawUser, GetUserProfile, SearchUsers, ToggleFollow, UpdateProfilePicture, UpdateUser } from '../services/userService';
+import {
+	CheckUserIdInUse,
+	CreateUserAccount,
+	DeleteProfilePicture,
+	DeleteUserProfile,
+	GetMyProfile,
+	GetRawUser,
+	GetUserProfile,
+	SearchUsers,
+	ToggleFollow,
+	UpdateProfilePicture,
+	UpdateUser
+} from '../services/userService';
 import { requireAuth } from '../routers/authRouters';
 
 const router = express.Router();
@@ -124,7 +136,7 @@ router.put('/', requireAuth, async (req, res) => {
 	await UpdateUser(req.userId, req.body.name);
 	res.status(200).send({
 		status: 'success',
-		message: 'User data updated!',
+		message: 'User data updated!'
 	});
 });
 
@@ -135,14 +147,14 @@ router.delete('/', requireAuth, async (req, res) => {
 	await DeleteUserProfile(req.userId);
 	res.status(200).send({
 		status: 'success',
-		message: 'User profile deleted!',
+		message: 'User profile deleted!'
 	});
 });
 
 /**
  * Change profile picture.
  */
-router.put('/profileImage', requireAuth, upload.single("image"), async (req, res) => {
+router.put('/profileImage', requireAuth, upload.single('image'), async (req, res) => {
 	let fileUrl = await UpdateProfilePicture(req.userId, req.file);
 	res.status(200).send({
 		status: 'success',
@@ -158,7 +170,7 @@ router.delete('/profileImage', requireAuth, async (req, res) => {
 	await DeleteProfilePicture(req.userId);
 	res.status(200).send({
 		status: 'success',
-		message: 'Profile image deleted!',
+		message: 'Profile image deleted!'
 	});
 });
 
