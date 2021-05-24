@@ -32,6 +32,9 @@ router.post('/', requireAuth, async (req, res) => {
     });
 });
 
+/**
+ * Leave a group to which you were added by someone else
+ */
 router.put('/leaveGroup/:groupId', async (req, res) => {
     let groupId = req.params.groupId;
 

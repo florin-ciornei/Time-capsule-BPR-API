@@ -71,7 +71,7 @@ router.get('/:id', async (req, res) => {
 	let profile = await GetUserProfile(req.params.id as string, req.userId);
 
 	if (!profile) {
-		return res.status(400).send({
+		return res.status(404).send({
 			status: 'error',
 			code: 'user_not_found',
 			message: 'A user with this ID was not found.'

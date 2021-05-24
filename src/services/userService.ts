@@ -3,7 +3,7 @@ import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
 import NotificationModel, { Notification } from '../schemas/notificationSchema';
 import GroupModel, { Group } from '../schemas/groupSchema';
 import { LeanDocument } from 'mongoose';
-import { sendFollowNotification } from './notificationService';
+import { SendFollowNotification } from './notificationService';
 import firebase from './firebaseService';
 
 export const CheckUserIdInUse = async (firebaseUserId: string): Promise<boolean> => {
@@ -42,6 +42,8 @@ export const GetMyProfile = async (userId: string): Promise<any> => {
 
 export const GetUserProfile = async (userId: string, requestingUserId: string): Promise<any> => {
 	let user = await UserModel.findById(userId).lean();
+	if (!user)
+		return;
 
 	user.isFollowedByMe = user.followedByUsers ? user.followedByUsers.includes(requestingUserId) : false;
 	user.followersCount = user.followedByUsers ? user.followedByUsers.length : 0;
@@ -64,7 +66,7 @@ export const ToggleFollow = async (followedId: string, followerId: string, toggl
 	if (toggle) {
 		await UserModel.updateOne({ _id: followedId }, { $push: { followedByUsers: followerId } });
 		await UserModel.updateOne({ _id: followerId }, { $push: { followingUsers: followedId } });
-		await sendFollowNotification(followerId, followedId);
+		await SendFollowNotification(followerId, followedId);
 	} else {
 		await UserModel.updateOne({ _id: followedId }, { $pull: { followedByUsers: followerId } });
 		await UserModel.updateOne({ _id: followerId }, { $pull: { followingUsers: followedId } });
@@ -80,10 +82,13 @@ export const DeleteUserProfile = async (userId: string) => {
 	await NotificationModel.deleteMany({ toUser: userId });
 	await TimeCapsuleModel.deleteMany({ owner: userId });
 	await GroupModel.deleteMany({ owner: userId });
-	try {
-		await firebase.admin.auth().deleteUser(userId);
-	} catch (e) {
-		console.log(e.code, e.message);
+
+	if (process.env.NODE_ENV != "test") {
+		try {
+			await firebase.admin.auth().deleteUser(userId);
+		} catch (e) {
+			console.log(e.code, e.message);
+		}
 	}
 }
 
