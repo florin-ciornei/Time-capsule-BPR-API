@@ -123,7 +123,7 @@ describe('Test GroupController', () => {
 		expect(response.body.groups.length).toBe(3);
 	});
 
-	it('Gets all my groups', async () => {
+	it('Gets all groups containg me', async () => {
 		await request(app)
 			.post('/group')
 			.set('Authorization', 'Bearer creatorId')
