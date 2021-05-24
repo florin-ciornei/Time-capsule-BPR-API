@@ -38,6 +38,10 @@ export const GetAllUserGroups = async (userId: string): Promise<Group[]> => {
 	return await GroupModel.find({ owner: userId }).select("-users -__v -owner").lean();;
 }
 
+export const GetGroupsContainingMe = async (userId: string): Promise<Group[]> => {
+	return await GroupModel.find({ users: userId }).select("-users -__v -owner").lean();;
+}
+
 export const GetGroupById = async (groupId: string, ownerId: string): Promise<Group> => {
 	return await GroupModel.findOne({ _id: groupId, owner: ownerId })
 		.populate("users").select("-__v -owner").lean();

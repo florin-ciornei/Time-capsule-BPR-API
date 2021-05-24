@@ -117,6 +117,28 @@ describe('Test GroupController', () => {
 		expect(response.body.groups.length).toBe(3);
 	});
 
+	it("Gets all my groups", async () => {
+		await request(app).post("/group").set('Authorization', 'Bearer creatorId')
+			.send({
+				"name": "group name",
+				"users": ["user1", "user2"],
+			});
+		await request(app).post("/group").set('Authorization', 'Bearer creatorId')
+			.send({
+				"name": "group name1",
+				"users": ["user1", "user2", "user3"],
+			});
+		await request(app).post("/group").set('Authorization', 'Bearer creatorId')
+			.send({
+				"name": "group name2",
+				"users": ["user1", "user2"],
+			});
+
+		const response = await request(app).get("/group/containingMe").set('Authorization', 'Bearer user3').send();
+		expect(response.status).toBe(200);
+		expect(response.body.groups.length).toBe(1);
+	});
+
 	it("Gets group by id", async () => {
 		const createUser1Result = await request(app).post("/user/register").set('Authorization', 'Bearer user1').send({ name: "name1", email: "email1" });
 		const createUser2Result = await request(app).post("/user/register").set('Authorization', 'Bearer user2').send({ name: "name2", email: "email2" });

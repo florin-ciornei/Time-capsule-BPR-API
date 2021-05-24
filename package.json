@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"prepare": "npm run gcp-build",
-		"test": "jest",
+		"test": "jest --runInBand --verbose",
 		"dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"ts-node --files src/index.ts\"",
 		"dev1": "cross-env NODE_ENV=dev nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"ts-node --files src/index.ts\"",
 		"lint": "eslint ./src --ext .ts",

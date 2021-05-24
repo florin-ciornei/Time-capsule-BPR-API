@@ -1,7 +1,7 @@
 import * as express from 'express';
 import * as mongoose from 'mongoose';
 import { requireAuth } from '../routers/authRouters';
-import { CreateGroup, DeleteGroup, GetAllUserGroups, GetGroupById, IsGroupNameUnique, LeaveGroup, UpdateGroup } from '../services/groupService';
+import { CreateGroup, DeleteGroup, GetAllUserGroups, GetGroupById, GetGroupsContainingMe, IsGroupNameUnique, LeaveGroup, UpdateGroup } from '../services/groupService';
 
 const ObjectId = mongoose.Types.ObjectId;
 const router = express.Router();
@@ -105,6 +105,16 @@ router.get("/all", async (req, res) => {
         results: groups.length
     });
 });
+
+router.get("/containingMe", async (req, res) => {
+    let groups = await GetGroupsContainingMe(req.userId);
+    res.status(200).send({
+        status: 'success',
+        groups: groups,
+        results: groups.length
+    });
+});
+
 
 router.get("/:id", async (req, res) => {
     let groupId = req.params.id;
