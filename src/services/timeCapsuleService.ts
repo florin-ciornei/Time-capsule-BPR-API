@@ -152,11 +152,31 @@ export const GetFeed = async (userId: string, page: number, resultsPerPage: numb
 	let timeCapsules = await TimeCapsuleModel.find(filter)
 		.populate('owner', 'name')
 		.sort({ createDate: 'desc' })
-		.skip(page * resultsPerPage)
-		.limit(resultsPerPage)
+		.skip(page * (resultsPerPage - 2))
+		.limit(resultsPerPage - 2)
 		.lean();
 	timeCapsules = timeCapsules.map((timeCapsule) => parseTimeCapsule(timeCapsule as TimeCapsule, userId, false));
-	return timeCapsules;
+
+	// also select 2 random capsules based on user preffered tags
+	let prefferedTags = (await UserModel.findById(userId)).prefferedTags;
+	let prefferedTagsCapsules = await TimeCapsuleModel.find({
+		isPrivate: false,
+		$or: [
+			// capsules that don't have allowedGroups or allowedUsers can be seen by anyone
+			{
+				allowedGroups: [],
+				allowedUsers: []
+			}
+		],
+		tags: { $in: prefferedTags }
+	})
+		.sort({ createDate: 'desc' })
+		.skip(page * 2)
+		.limit(2)
+		.lean();
+	prefferedTagsCapsules = prefferedTagsCapsules.map((timeCapsule) => parseTimeCapsule(timeCapsule as TimeCapsule, userId, false));
+
+	return [...timeCapsules, ...prefferedTagsCapsules];
 };
 
 export const GetPublicFeed = async (status: string, page: number, resultsPerPage: number): Promise<LeanDocument<TimeCapsule>[]> => {
