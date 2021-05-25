@@ -87,7 +87,7 @@ router.post('/', requireAuth, upload.array('contents'), async (req, res) => {
 		}
 	}
 
-	if (tags.length > 5) {
+	if (tags && tags.length > 5) {
 		return res.status(400).send({
 			status: 'error',
 			code: 'too_many_tags',
@@ -95,7 +95,7 @@ router.post('/', requireAuth, upload.array('contents'), async (req, res) => {
 		});
 	}
 
-	if (allowedUsers.length > 100) {
+	if (allowedUsers && allowedUsers.length > 100) {
 		return res.status(400).send({
 			status: 'error',
 			code: 'too_many_allowed_users',
@@ -103,7 +103,7 @@ router.post('/', requireAuth, upload.array('contents'), async (req, res) => {
 		});
 	}
 
-	if (allowedGroups.length > 10) {
+	if (allowedGroups && allowedGroups.length > 10) {
 		return res.status(400).send({
 			status: 'error',
 			code: 'too_many_groups',
@@ -160,7 +160,7 @@ router.put('/:id', requireAuth, async (req, res) => {
 		});
 	}
 
-	if (allowedUsers.length > 100) {
+	if (allowedUsers && allowedUsers.length > 100) {
 		return res.status(400).send({
 			status: 'error',
 			code: 'too_many_allowed_users',
@@ -168,7 +168,7 @@ router.put('/:id', requireAuth, async (req, res) => {
 		});
 	}
 
-	if (allowedGroups.length > 10) {
+	if (allowedGroups && allowedGroups.length > 10) {
 		return res.status(400).send({
 			status: 'error',
 			code: 'too_many_groups',

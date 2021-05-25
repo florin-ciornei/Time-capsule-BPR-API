@@ -40,7 +40,7 @@ router.post('/', requireAuth, async (req, res) => {
 		});
 	}
 
-	if (users.length > 100) {
+	if (users && users.length > 100) {
 		return res.status(400).send({
 			status: 'error',
 			code: 'too_many_users',
@@ -98,7 +98,7 @@ router.put('/:id', async (req, res) => {
 		});
 	}
 
-	if (users.length > 100) {
+	if (users && users.length > 100) {
 		return res.status(400).send({
 			status: 'error',
 			code: 'too_many_users',
