@@ -20,16 +20,13 @@ export const CreateTimeCapsule = async (
 	backgroundType: number,
 	files: Express.Multer.File[]
 ): Promise<TimeCapsule> => {
-	//TODO validate fields
-
-	// Converts all tags to lower case before saving them
-	// ans storing the time capsule in the database
+	// convert all tags to lower case before saving them
 	if (!tags) tags = [];
 	tags.forEach((tag, index) => {
 		tags[index] = tag.toLowerCase();
 	});
 
-	//create the time capsule
+	// create the time capsule
 	let timeCapsule = await TimeCapsuleModel.create({
 		name: name,
 		description: description,
@@ -44,7 +41,7 @@ export const CreateTimeCapsule = async (
 		backgroundType: backgroundType
 	});
 
-	//upload the files and set them in the time capsule, and save the time capsule with the new contents
+	// upload the files and set them in the time capsule, and save the time capsule with the new contents
 	let contents: { url: string; mimeType: string }[] = [];
 	for (let i = 0; i < files.length; i++) {
 		let file = files[i];

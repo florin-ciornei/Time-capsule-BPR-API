@@ -12,26 +12,21 @@ const bucket = admin.storage().bucket();
 const uploadFileToBucket = async (file: Express.Multer.File, folder: string, uploadedFileName: string): Promise<string> => {
 	return new Promise((resolve, reject) => {
 		let newFileName = `capsuleContents/${folder}/${uploadedFileName}`;
-
 		let fileUpload = bucket.file(newFileName);
-
-		const blobStream = fileUpload.createWriteStream({
+		const writeStream = fileUpload.createWriteStream({
 			public: true,
 			metadata: {
 				contentType: file.mimetype
 			}
 		});
-
-		blobStream.on('error', (error) => {
+		writeStream.on('error', (error) => {
 			reject('Something is wrong! Unable to upload at the moment.');
 		});
-
-		blobStream.on('finish', () => {
+		writeStream.on('finish', () => {
 			const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileUpload.name}`;
 			resolve(publicUrl);
 		});
-
-		blobStream.end(file.buffer);
+		writeStream.end(file.buffer);
 	});
 };
 
