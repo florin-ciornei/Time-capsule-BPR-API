@@ -119,9 +119,9 @@ export const SendFollowNotification = async (byUserId: string, toUserId: string)
 	});
 };
 
-if (process.env.NODE_ENV != 'test') {
-	console.log('Start lookin for opened capsules...');
-	setInterval(() => {
-		SendTimeCapsuleOpenNotification();
-	}, 10000);
-}
+// if (process.env.NODE_ENV != 'test') {
+// 	console.log('Start lookin for opened capsules...');
+// 	setInterval(() => {
+// 		SendTimeCapsuleOpenNotification();
+// 	}, 10000);
+// }
