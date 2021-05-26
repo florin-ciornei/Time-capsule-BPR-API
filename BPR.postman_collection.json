@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"user2\",\r\n    \"email\": \"email2\"\r\n}",
+							"raw": "{\r\n    \"name\": \"name\",\r\n    \"email\": \"email\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -32,111 +32,7 @@
 								"register"
 							]
 						},
-						"description": "Register a user after creating account on firebase\r\n\r\n**asdasdasdasdas**\r\n\r\n`asdasdasd`"
-					},
-					"response": []
-				},
-				{
-					"name": "Search users by name",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{apiUrl}}/user/search/user",
-							"host": [
-								"{{apiUrl}}"
-							],
-							"path": [
-								"user",
-								"search",
-								"user"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get user profile",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{apiUrl}}/user/123test123",
-							"host": [
-								"{{apiUrl}}"
-							],
-							"path": [
-								"user",
-								"123test123"
-							]
-						},
-						"description": "/user/:userId\n\nGet user profile data."
-					},
-					"response": []
-				},
-				{
-					"name": "Get my profile",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{apiUrl}}/user/me",
-							"host": [
-								"{{apiUrl}}"
-							],
-							"path": [
-								"user",
-								"me"
-							]
-						},
-						"description": "/user/me\n\nGet my user profile data."
-					},
-					"response": []
-				},
-				{
-					"name": "Toggle follow",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"url": {
-							"raw": "{{apiUrl}}/user/followUnfollow/324",
-							"host": [
-								"{{apiUrl}}"
-							],
-							"path": [
-								"user",
-								"followUnfollow",
-								"324"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Change profile image",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "image",
-									"type": "file",
-									"src": "/C:/Users/Bruger/Pictures/New folder/5fb7f93c4824b023176fe90f.jpg"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{apiUrl}}/user/profileImage",
-							"host": [
-								"{{apiUrl}}"
-							],
-							"path": [
-								"user",
-								"profileImage"
-							]
-						}
+						"description": "Call this route to register the user account after the account was created on Firebase."
 					},
 					"response": []
 				},
@@ -163,30 +59,12 @@
 								"user"
 							]
 						},
-						"description": "Update user profile data. See body for the fields that you can change."
+						"description": "Update user profile data."
 					},
 					"response": []
 				},
 				{
-					"name": "Delete profile image",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{apiUrl}}/user/profileImage",
-							"host": [
-								"{{apiUrl}}"
-							],
-							"path": [
-								"user",
-								"profileImage"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete user profile",
+					"name": "User profile",
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -202,6 +80,154 @@
 						"description": "Completely delete the profile of the user. It is a good idea to sign out the user before calling this route, as the user account will be deleted from Firebase by the server."
 					},
 					"response": []
+				},
+				{
+					"name": "Search users by name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/user/search/:query",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"user",
+								"search",
+								":query"
+							],
+							"variable": [
+								{
+									"key": "query",
+									"value": "Test",
+									"description": "Name of the user you want to search"
+								}
+							]
+						},
+						"description": "Search a user by username."
+					},
+					"response": []
+				},
+				{
+					"name": "User profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/user/:id",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "hqsHDavBTxU277e6rhN9s93UfJF3",
+									"description": "The id of the user profile you want to fetch"
+								}
+							]
+						},
+						"description": "Get user profile data."
+					},
+					"response": []
+				},
+				{
+					"name": "My profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/user/me",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"user",
+								"me"
+							]
+						},
+						"description": "Get my profile."
+					},
+					"response": []
+				},
+				{
+					"name": "Toggle follow",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/user/followUnfollow/:userId",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"user",
+								"followUnfollow",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "hqsHDavBTxU277e6rhN9s93UfJF3",
+									"description": "Id of the user you want to follow/unfollow"
+								}
+							]
+						},
+						"description": "Follow/unfollow for a user."
+					},
+					"response": []
+				},
+				{
+					"name": "Change profile image",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"description": "The image the user picked.",
+									"type": "file",
+									"src": "/C:/Users/Bruger/Pictures/New folder/5fb7f93c4824b023176fe90f.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{apiUrl}}/user/profileImage",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"user",
+								"profileImage"
+							]
+						},
+						"description": "Change your profile picture."
+					},
+					"response": []
+				},
+				{
+					"name": "Profile image",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{apiUrl}}/user/profileImage",
+							"host": [
+								"{{apiUrl}}"
+							],
+							"path": [
+								"user",
+								"profileImage"
+							]
+						},
+						"description": "Deletes profile image. The profileImageUrl will be \"\" (empty string) after this."
+					},
+					"response": []
 				}
 			]
 		},
@@ -215,7 +241,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"name1\",\r\n    \"users\": [\"someUserId1\"]\r\n}",
+							"raw": "{\r\n    \"name\": \"Group name\",\r\n    \"users\": [\"hqsHDavBTxU277e6rhN9s93UfJF3\"]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -230,7 +256,8 @@
 							"path": [
 								"group"
 							]
-						}
+						},
+						"description": "Create a new group with whom a time capsule can be shared."
 					},
 					"response": []
 				},
@@ -241,7 +268,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"name1\",\r\n    \"users\": [\"someUserId1\"]\r\n}",
+							"raw": "{\r\n    \"name\": \"New name\",\r\n    \"users\": [\"hqsHDavBTxU277e6rhN9s93UfJF3\"]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -249,20 +276,28 @@
 							}
 						},
 						"url": {
-							"raw": "{{apiUrl}}/group/609fceb251d86e288c908981",
+							"raw": "{{apiUrl}}/group/:groupId",
 							"host": [
 								"{{apiUrl}}"
 							],
 							"path": [
 								"group",
-								"609fceb251d86e288c908981"
+								":groupId"
+							],
+							"variable": [
+								{
+									"key": "groupId",
+									"value": "609fceb251d86e288c908981",
+									"description": "The id of the group."
+								}
 							]
-						}
+						},
+						"description": "Update an existing group."
 					},
 					"response": []
 				},
 				{
-					"name": "Get all my groups (only for display)",
+					"name": "My groups",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -275,7 +310,8 @@
 								"group",
 								"all"
 							]
-						}
+						},
+						"description": "Returns all the groups that belong to me. They contain only information required to be displayed in the list (users are excluded)."
 					},
 					"response": []
 				},
@@ -285,47 +321,43 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{apiUrl}}/group/delete/6048887b0b11c50618c10729",
+							"raw": "{{apiUrl}}/group/delete/:groupId",
 							"host": [
 								"{{apiUrl}}"
 							],
 							"path": [
 								"group",
 								"delete",
-								"6048887b0b11c50618c10729"
+								":groupId"
+							],
+							"variable": [
+								{
+									"key": "groupId",
+									"value": "60a925226633b393e0e402fa",
+									"description": "The id of the group."
+								}
 							]
 						},
-						"description": "asfasgfdgfdgdfg"
+						"description": "Deletes a group."
 					},
 					"response": []
 				},
 				{
-					"name": "Get group by id (full group details)",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
+					"name": "Groups containg me",
 					"request": {
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"name\",\r\n    \"users\": []\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "{{apiUrl}}/group/604889f69c1913359426600c",
+							"raw": "{{apiUrl}}/group/containingMe",
 							"host": [
 								"{{apiUrl}}"
 							],
 							"path": [
 								"group",
-								"604889f69c1913359426600c"
+								"containingMe"
 							]
-						}
+						},
+						"description": "Get all the groups to which I am added. They are only for the display list (users are not included)."
 					},
 					"response": []
 				},
@@ -335,17 +367,24 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{apiUrl}}/group/leaveGroup/60a0b3ad4107a4356c92814a",
+							"raw": "{{apiUrl}}/group/leaveGroup/:groupId",
 							"host": [
 								"{{apiUrl}}"
 							],
 							"path": [
 								"group",
 								"leaveGroup",
-								"60a0b3ad4107a4356c92814a"
+								":groupId"
+							],
+							"variable": [
+								{
+									"key": "groupId",
+									"value": "60a0b3ad4107a4356c92814a",
+									"description": "The id of the group."
+								}
 							]
 						},
-						"description": "/group/leaveGroup/`groupId`\n\nThe user can leave a group to which he/she was added."
+						"description": "Remove the current user from a group."
 					},
 					"response": []
 				}
@@ -395,8 +434,7 @@
 								{
 									"key": "tags[]",
 									"value": "tag3",
-									"type": "text",
-									"disabled": true
+									"type": "text"
 								},
 								{
 									"key": "allowedUsers[]",
@@ -436,12 +474,12 @@
 								{
 									"key": "contents",
 									"type": "file",
-									"src": "/C:/Users/Bruger/Pictures/New folder/5fb4e34a2ba65934fcda3891.jpg"
+									"src": "/C:/Users/Bruger/Pictures/New folder/5fb7f93c4824b023176fe910.jpg"
 								},
 								{
 									"key": "contents",
 									"type": "file",
-									"src": "/C:/Users/Bruger/Pictures/New folder/5fb7f93c4824b023176fe90f.jpg"
+									"src": "/C:/Users/Bruger/Pictures/New folder/5fb7fca1f5c05708e5200523.jpg"
 								}
 							]
 						},
@@ -453,12 +491,13 @@
 							"path": [
 								"timeCapsule"
 							]
-						}
+						},
+						"description": "Create a time capsule."
 					},
 					"response": []
 				},
 				{
-					"name": "Get my time capsules",
+					"name": "My time capsules",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -477,7 +516,7 @@
 					"response": []
 				},
 				{
-					"name": "Get feed for authneticated user",
+					"name": "Feed for authneticated user",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -497,17 +536,17 @@
 								}
 							]
 						},
-						"description": "Use ?page=`pageNumber` for pagination or infinite scroll. There are 20 results per page."
+						"description": "Get a feed made from time capsules to which you are subscribed. There are 20 results per page."
 					},
 					"response": []
 				},
 				{
-					"name": "Get feed for public user",
+					"name": "Public feed",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{apiUrl}}/timeCapsule/publicFeed?page=0",
+							"raw": "{{apiUrl}}/timeCapsule/publicFeed?page=0&status=opened",
 							"host": [
 								"{{apiUrl}}"
 							],
@@ -519,15 +558,19 @@
 								{
 									"key": "page",
 									"value": "0"
+								},
+								{
+									"key": "status",
+									"value": "opened"
 								}
 							]
 						},
-						"description": "Use ?page=`pageNumber` for pagination or infinite scroll. There are 20 results per page."
+						"description": "Get a public feed. There are 20 results per page."
 					},
 					"response": []
 				},
 				{
-					"name": "Edit accessibility permissions",
+					"name": "Edit time capsule",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -541,15 +584,23 @@
 							}
 						},
 						"url": {
-							"raw": "{{apiUrl}}/timeCapsule/605caf2cd090f13eb01b6d5f",
+							"raw": "{{apiUrl}}/timeCapsule/:capsuleId",
 							"host": [
 								"{{apiUrl}}"
 							],
 							"path": [
 								"timeCapsule",
-								"605caf2cd090f13eb01b6d5f"
+								":capsuleId"
+							],
+							"variable": [
+								{
+									"key": "capsuleId",
+									"value": "60a690c312169184bc9bbf90",
+									"description": "Id of the capsule you want to edit."
+								}
 							]
-						}
+						},
+						"description": "Edit a time capsule. Content cannot be edited nor viewed after the time capsule was created."
 					},
 					"response": []
 				},
@@ -559,17 +610,24 @@
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{apiUrl}}/timeCapsule/leaveAllowedUsers/60a0b4f7ed3a5a2c10750db7",
+							"raw": "{{apiUrl}}/timeCapsule/leaveAllowedUsers/:capsuleId",
 							"host": [
 								"{{apiUrl}}"
 							],
 							"path": [
 								"timeCapsule",
 								"leaveAllowedUsers",
-								"60a0b4f7ed3a5a2c10750db7"
+								":capsuleId"
+							],
+							"variable": [
+								{
+									"key": "capsuleId",
+									"value": "60a690c312169184bc9bbf90",
+									"description": "Id of the time capsule from which you want to leave allowed users."
+								}
 							]
 						},
-						"description": "/timeCapsule/leaveAllowedUsers/`capsuleId`\n\nThe user can leave the list of allowed users to which he/she was added."
+						"description": "The user can leave the list of allowed users to which he/she was added."
 					},
 					"response": []
 				},
@@ -591,15 +649,17 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": ""
+									"value": "60a690c312169184bc9bbf90",
+									"description": "Id of the time capsule to delete."
 								}
 							]
-						}
+						},
+						"description": "Delete a time capsule."
 					},
 					"response": []
 				},
 				{
-					"name": "Get  timeCapsule by ID",
+					"name": "Capsule by id",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -615,10 +675,12 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": ""
+									"value": "60a690c312169184bc9bbf90",
+									"description": "Id of the time capsule"
 								}
 							]
-						}
+						},
+						"description": "Get time capsule by id."
 					},
 					"response": []
 				},
@@ -628,17 +690,24 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{apiUrl}}/timeCapsule/60649f7ba578ec5fccd12b84/toggleSubscription",
+							"raw": "{{apiUrl}}/timeCapsule/:capsuleId/toggleSubscription",
 							"host": [
 								"{{apiUrl}}"
 							],
 							"path": [
 								"timeCapsule",
-								"60649f7ba578ec5fccd12b84",
+								":capsuleId",
 								"toggleSubscription"
+							],
+							"variable": [
+								{
+									"key": "capsuleId",
+									"value": "60a690c312169184bc9bbf90",
+									"description": "The id of the capsule to which you want to subscribe/unsubscibe."
+								}
 							]
 						},
-						"description": "/timeCapsule/`capsuleId`/toggleSubscription\n\nToggle subscription to a time capsule."
+						"description": "Toggle subscription to a time capsule."
 					},
 					"response": []
 				},
@@ -648,23 +717,35 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{apiUrl}}/timeCapsule/60672e29eb7fe5b28812838e/react/remove",
+							"raw": "{{apiUrl}}/timeCapsule/:capsuleId/react/:reaction",
 							"host": [
 								"{{apiUrl}}"
 							],
 							"path": [
 								"timeCapsule",
-								"60672e29eb7fe5b28812838e",
+								":capsuleId",
 								"react",
-								"remove"
+								":reaction"
+							],
+							"variable": [
+								{
+									"key": "capsuleId",
+									"value": "60a690c312169184bc9bbf90",
+									"description": "The id of the capsule to which you want to react."
+								},
+								{
+									"key": "reaction",
+									"value": "remove",
+									"description": "The name of the reaction or 'remove' to remove reaction."
+								}
 							]
 						},
-						"description": "/timeCapsule/`capsuleId`/react/`reaction`\n\nReact or remove reaction to a time capsule.\n\n`reaction` parameter can have the following values: `remove` (to remove your reaction from this time capsule), `like`, `love`, `laugh`, `compassion`, `startled`, `crying`, `sad`"
+						"description": "React or remove reaction to a time capsule.\n\n`reaction` parameter can have the following values: `remove` (to remove your reaction from this time capsule), `like`, `love`, `laugh`, `compassion`, `startled`, `crying`, `sad`"
 					},
 					"response": []
 				},
 				{
-					"name": "GetSubscribedCapsules",
+					"name": "Subscribed time capsules",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -677,12 +758,13 @@
 								"timeCapsule",
 								"subscribed"
 							]
-						}
+						},
+						"description": "Get the time capsules to which the current user is subscribed."
 					},
 					"response": []
 				},
 				{
-					"name": "SearchCapsules",
+					"name": "Search time capsules",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -710,22 +792,29 @@
 					"response": []
 				},
 				{
-					"name": "Get user's time capsules",
+					"name": "User's time capsules",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{apiUrl}}/timeCapsule/user/test123124242",
+							"raw": "{{apiUrl}}/timeCapsule/user/:userId",
 							"host": [
 								"{{apiUrl}}"
 							],
 							"path": [
 								"timeCapsule",
 								"user",
-								"test123124242"
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "UFs1eatlhdNloR1H5ACAKja1oae2",
+									"description": "Get timecapsules created by a user."
+								}
 							]
 						},
-						"description": "/timeCapsule/user/`userId`\n\nGet all the time capsules created by a user. This route also filters and hides time capsules to which you don't have access (for example if they are not shared with you, or if they are not shared with a group in which you are present)"
+						"description": "Get all the time capsules created by a user. This route also filters and hides time capsules to which you don't have access (for example if they are not shared with you, or if they are not shared with a group in which you are present)"
 					},
 					"response": []
 				}
@@ -735,27 +824,34 @@
 			"name": "Tag",
 			"item": [
 				{
-					"name": "Get tag suggestions",
+					"name": "Tag suggestions",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{apiUrl}}/tag/suggestions/ta",
+							"raw": "{{apiUrl}}/tag/suggestions/:query",
 							"host": [
 								"{{apiUrl}}"
 							],
 							"path": [
 								"tag",
 								"suggestions",
-								"ta"
+								":query"
+							],
+							"variable": [
+								{
+									"key": "query",
+									"value": "tag",
+									"description": "The tag searched by the user."
+								}
 							]
 						},
-						"description": "{{apiUrl}}/tag/suggestions/`query`\r\n\r\nGets tag suggestions. The response is limited to 20 results."
+						"description": "Gets tag suggestions. The response is limited to 20 results."
 					},
 					"response": []
 				},
 				{
-					"name": "Get all tags",
+					"name": "All tags",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -788,7 +884,7 @@
 								"registerSuggestions"
 							]
 						},
-						"description": "Get tag suggestions that are displayed when the users registers."
+						"description": "Get tag suggestions that are displayed when the user registers."
 					},
 					"response": []
 				},
@@ -799,7 +895,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"tags\": [\r\n        \"tag1\",\r\n        \"time machine\"\r\n    ]\r\n}",
+							"raw": "{\r\n    \"tags\": [\r\n        \"tag1\",\r\n        \"tag2\"\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -815,7 +911,8 @@
 								"tag",
 								"saveTags"
 							]
-						}
+						},
+						"description": "Save prefferred tags, usually called after registering."
 					},
 					"response": []
 				}
@@ -825,7 +922,7 @@
 			"name": "Notifications",
 			"item": [
 				{
-					"name": "Get my notifications",
+					"name": "My notifications",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -840,10 +937,12 @@
 							"query": [
 								{
 									"key": "page",
-									"value": "0"
+									"value": "0",
+									"description": "Current notifications page."
 								}
 							]
-						}
+						},
+						"description": "Returns my notifications. There are 20 results per page."
 					},
 					"response": []
 				}
@@ -855,7 +954,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "userId2",
+				"value": "someUserId1",
 				"type": "string"
 			}
 		]

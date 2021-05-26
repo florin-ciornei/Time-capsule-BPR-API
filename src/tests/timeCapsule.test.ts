@@ -299,6 +299,162 @@ describe('Test TimeCapsuleController', () => {
 		expect(otherUserTimeCapsules.body.timeCapsules[0].name).toBe('capsule name visible');
 	});
 
+	it('Fetches public feed only closed', async () => {
+		// only this capsule will be visible
+		await request(app)
+			.post('/timeCapsule')
+			.set({
+				Authorization: 'Bearer user1'
+			})
+			.field('name', 'capsule name visible')
+			.field('description', 'capsule description')
+			.field('openDate', '2022-03-20T12:55:26.075Z')
+			.field('isPrivate', 'false')
+			.field('tags[]', 'tag1')
+			.field('tags[]', 'tag2')
+			.field('tags[]', 'tag3')
+			.field('lat', '47.123')
+			.field('lon', '20.123')
+			.field('backgroundType', '0');
+
+		// is opened
+		await request(app)
+			.post('/timeCapsule')
+			.set({
+				Authorization: 'Bearer user1'
+			})
+			.field('name', 'capsule name visible')
+			.field('description', 'capsule description')
+			.field('openDate', '2020-03-20T12:55:26.075Z')
+			.field('isPrivate', 'false')
+			.field('tags[]', 'tag1')
+			.field('tags[]', 'tag2')
+			.field('tags[]', 'tag3')
+			.field('lat', '47.123')
+			.field('lon', '20.123')
+			.field('backgroundType', '0');
+
+		// is private
+		await request(app)
+			.post('/timeCapsule')
+			.set({
+				Authorization: 'Bearer user1'
+			})
+			.field('name', 'capsule name')
+			.field('description', 'capsule description')
+			.field('openDate', '2022-03-20T12:55:26.075Z')
+			.field('isPrivate', 'true')
+			.field('tags[]', 'tag1')
+			.field('tags[]', 'tag2')
+			.field('tags[]', 'tag3')
+			.field('lat', '47.123')
+			.field('lon', '20.123')
+			.field('backgroundType', '0');
+
+		// has allowed users/allowed groups, so it is not private
+		await request(app)
+			.post('/timeCapsule')
+			.set({
+				Authorization: 'Bearer user1'
+			})
+			.field('name', 'capsule name')
+			.field('description', 'capsule description')
+			.field('openDate', '2022-03-20T12:55:26.075Z')
+			.field('isPrivate', 'false')
+			.field('tags[]', 'tag1')
+			.field('tags[]', 'tag2')
+			.field('tags[]', 'tag3')
+			.field('allowedUsers[]', 'userId1')
+			.field('allowedUsers[]', 'userId2')
+			.field('allowedGroups[]', 'groupId1')
+			.field('allowedGroups[]', 'groupId2')
+			.field('lat', '47.123')
+			.field('lon', '20.123')
+			.field('backgroundType', '0');
+
+		const otherUserTimeCapsules = await request(app).get(`/timeCapsule/publicFeed?status=closed`).send();
+		expect(otherUserTimeCapsules.body.timeCapsules.length).toBe(1); // only one should be visible
+		expect(otherUserTimeCapsules.body.timeCapsules[0].name).toBe('capsule name visible');
+	});
+
+	it('Fetches public feed only opened', async () => {
+		// is closed, not visible
+		await request(app)
+			.post('/timeCapsule')
+			.set({
+				Authorization: 'Bearer user1'
+			})
+			.field('name', 'capsule name visible')
+			.field('description', 'capsule description')
+			.field('openDate', '2022-03-20T12:55:26.075Z')
+			.field('isPrivate', 'false')
+			.field('tags[]', 'tag1')
+			.field('tags[]', 'tag2')
+			.field('tags[]', 'tag3')
+			.field('lat', '47.123')
+			.field('lon', '20.123')
+			.field('backgroundType', '0');
+
+		// only this capsule will be visible
+		await request(app)
+			.post('/timeCapsule')
+			.set({
+				Authorization: 'Bearer user1'
+			})
+			.field('name', 'capsule name visible')
+			.field('description', 'capsule description')
+			.field('openDate', '2020-03-20T12:55:26.075Z')
+			.field('isPrivate', 'false')
+			.field('tags[]', 'tag1')
+			.field('tags[]', 'tag2')
+			.field('tags[]', 'tag3')
+			.field('lat', '47.123')
+			.field('lon', '20.123')
+			.field('backgroundType', '0');
+
+		// is private
+		await request(app)
+			.post('/timeCapsule')
+			.set({
+				Authorization: 'Bearer user1'
+			})
+			.field('name', 'capsule name')
+			.field('description', 'capsule description')
+			.field('openDate', '2022-03-20T12:55:26.075Z')
+			.field('isPrivate', 'true')
+			.field('tags[]', 'tag1')
+			.field('tags[]', 'tag2')
+			.field('tags[]', 'tag3')
+			.field('lat', '47.123')
+			.field('lon', '20.123')
+			.field('backgroundType', '0');
+
+		// has allowed users/allowed groups, so it is not private
+		await request(app)
+			.post('/timeCapsule')
+			.set({
+				Authorization: 'Bearer user1'
+			})
+			.field('name', 'capsule name')
+			.field('description', 'capsule description')
+			.field('openDate', '2022-03-20T12:55:26.075Z')
+			.field('isPrivate', 'false')
+			.field('tags[]', 'tag1')
+			.field('tags[]', 'tag2')
+			.field('tags[]', 'tag3')
+			.field('allowedUsers[]', 'userId1')
+			.field('allowedUsers[]', 'userId2')
+			.field('allowedGroups[]', 'groupId1')
+			.field('allowedGroups[]', 'groupId2')
+			.field('lat', '47.123')
+			.field('lon', '20.123')
+			.field('backgroundType', '0');
+
+		const otherUserTimeCapsules = await request(app).get(`/timeCapsule/publicFeed?status=opened`).send();
+		expect(otherUserTimeCapsules.body.timeCapsules.length).toBe(1); // only one should be visible
+		expect(otherUserTimeCapsules.body.timeCapsules[0].name).toBe('capsule name visible');
+	});
+
 	it('Subscribes to a time capsule', async () => {
 		const resultCreate = await request(app)
 			.post('/timeCapsule')
@@ -472,6 +628,164 @@ describe('Test TimeCapsuleController', () => {
 		expect(followResponse.status).toBe(200);
 
 		const feedResponse = await request(app).get(`/timeCapsule/feed`).set('Authorization', `Bearer ${user1Id}`).send();
+		expect(feedResponse.status).toBe(200);
+		expect(feedResponse.body.timeCapsules.length).toBe(1); // only one should be visible
+		expect(feedResponse.body.timeCapsules[0].name).toBe('capsule name visible');
+	});
+
+	it('Get private feed only closed', async () => {
+		const createUser1Result = await request(app).post('/user/register').set('Authorization', 'Bearer user1').send({ name: 'name1', email: 'email1' });
+		const createUser2Result = await request(app).post('/user/register').set('Authorization', 'Bearer user2').send({ name: 'name2', email: 'email2' });
+		const user1Id = createUser1Result.body.user._id;
+		const user2Id = createUser2Result.body.user._id;
+
+		await request(app)
+			.post('/timeCapsule')
+			.set({
+				Authorization: `Bearer ${user2Id}`
+			})
+			.field('name', 'capsule name visible')
+			.field('description', 'capsule description')
+			.field('openDate', '2022-03-20T12:55:26.075Z')
+			.field('isPrivate', 'false')
+			.field('lat', '47.123')
+			.field('lon', '20.123')
+			.field('backgroundType', '0');
+
+		await request(app)
+			.post('/timeCapsule')
+			.set({
+				Authorization: `Bearer ${user2Id}`
+			})
+			.field('name', 'capsule name visible')
+			.field('description', 'capsule description')
+			.field('openDate', '2020-03-20T12:55:26.075Z')
+			.field('isPrivate', 'false')
+			.field('lat', '47.123')
+			.field('lon', '20.123')
+			.field('backgroundType', '0');
+
+		// is private
+		await request(app)
+			.post('/timeCapsule')
+			.set({
+				Authorization: `Bearer ${user2Id}`
+			})
+			.field('name', 'capsule name')
+			.field('description', 'capsule description')
+			.field('openDate', '2022-03-20T12:55:26.075Z')
+			.field('isPrivate', 'true')
+			.field('tags[]', 'tag1')
+			.field('tags[]', 'tag2')
+			.field('tags[]', 'tag3')
+			.field('lat', '47.123')
+			.field('lon', '20.123')
+			.field('backgroundType', '0');
+
+		// has allowed users/allowed groups, so it is not private
+		await request(app)
+			.post('/timeCapsule')
+			.set({
+				Authorization: `Bearer ${user2Id}`
+			})
+			.field('name', 'capsule name')
+			.field('description', 'capsule description')
+			.field('openDate', '2022-03-20T12:55:26.075Z')
+			.field('isPrivate', 'false')
+			.field('tags[]', 'tag1')
+			.field('tags[]', 'tag2')
+			.field('tags[]', 'tag3')
+			.field('allowedUsers[]', 'userId1')
+			.field('allowedUsers[]', 'userId2')
+			.field('allowedGroups[]', 'groupId1')
+			.field('allowedGroups[]', 'groupId2')
+			.field('lat', '47.123')
+			.field('lon', '20.123')
+			.field('backgroundType', '0');
+
+		const followResponse = await request(app).put(`/user/followUnfollow/${user2Id}`).set('Authorization', `Bearer ${user1Id}`).send();
+		expect(followResponse.status).toBe(200);
+
+		const feedResponse = await request(app).get(`/timeCapsule/feed?status=closed`).set('Authorization', `Bearer ${user1Id}`).send();
+		expect(feedResponse.status).toBe(200);
+		expect(feedResponse.body.timeCapsules.length).toBe(1); // only one should be visible
+		expect(feedResponse.body.timeCapsules[0].name).toBe('capsule name visible');
+	});
+
+	it('Get private feed only opened', async () => {
+		const createUser1Result = await request(app).post('/user/register').set('Authorization', 'Bearer user1').send({ name: 'name1', email: 'email1' });
+		const createUser2Result = await request(app).post('/user/register').set('Authorization', 'Bearer user2').send({ name: 'name2', email: 'email2' });
+		const user1Id = createUser1Result.body.user._id;
+		const user2Id = createUser2Result.body.user._id;
+
+		await request(app)
+			.post('/timeCapsule')
+			.set({
+				Authorization: `Bearer ${user2Id}`
+			})
+			.field('name', 'capsule name visible')
+			.field('description', 'capsule description')
+			.field('openDate', '2022-03-20T12:55:26.075Z')
+			.field('isPrivate', 'false')
+			.field('lat', '47.123')
+			.field('lon', '20.123')
+			.field('backgroundType', '0');
+
+		await request(app)
+			.post('/timeCapsule')
+			.set({
+				Authorization: `Bearer ${user2Id}`
+			})
+			.field('name', 'capsule name visible')
+			.field('description', 'capsule description')
+			.field('openDate', '2020-03-20T12:55:26.075Z')
+			.field('isPrivate', 'false')
+			.field('lat', '47.123')
+			.field('lon', '20.123')
+			.field('backgroundType', '0');
+
+		// is private
+		await request(app)
+			.post('/timeCapsule')
+			.set({
+				Authorization: `Bearer ${user2Id}`
+			})
+			.field('name', 'capsule name')
+			.field('description', 'capsule description')
+			.field('openDate', '2022-03-20T12:55:26.075Z')
+			.field('isPrivate', 'true')
+			.field('tags[]', 'tag1')
+			.field('tags[]', 'tag2')
+			.field('tags[]', 'tag3')
+			.field('lat', '47.123')
+			.field('lon', '20.123')
+			.field('backgroundType', '0');
+
+		// has allowed users/allowed groups, so it is not private
+		await request(app)
+			.post('/timeCapsule')
+			.set({
+				Authorization: `Bearer ${user2Id}`
+			})
+			.field('name', 'capsule name')
+			.field('description', 'capsule description')
+			.field('openDate', '2022-03-20T12:55:26.075Z')
+			.field('isPrivate', 'false')
+			.field('tags[]', 'tag1')
+			.field('tags[]', 'tag2')
+			.field('tags[]', 'tag3')
+			.field('allowedUsers[]', 'userId1')
+			.field('allowedUsers[]', 'userId2')
+			.field('allowedGroups[]', 'groupId1')
+			.field('allowedGroups[]', 'groupId2')
+			.field('lat', '47.123')
+			.field('lon', '20.123')
+			.field('backgroundType', '0');
+
+		const followResponse = await request(app).put(`/user/followUnfollow/${user2Id}`).set('Authorization', `Bearer ${user1Id}`).send();
+		expect(followResponse.status).toBe(200);
+
+		const feedResponse = await request(app).get(`/timeCapsule/feed?status=opened`).set('Authorization', `Bearer ${user1Id}`).send();
 		expect(feedResponse.status).toBe(200);
 		expect(feedResponse.body.timeCapsules.length).toBe(1); // only one should be visible
 		expect(feedResponse.body.timeCapsules[0].name).toBe('capsule name visible');
