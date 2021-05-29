@@ -1,4 +1,3 @@
-import GroupModel, { Group } from '../schemas/groupSchema';
 import UserModel, { User } from '../schemas/userSchema';
 import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
 

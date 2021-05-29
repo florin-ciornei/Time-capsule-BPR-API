@@ -1,7 +1,4 @@
 import * as express from 'express';
-import GroupModel, { Group } from '../schemas/groupSchema';
-import UserModel, { User } from '../schemas/userSchema';
-import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
 import { GetAllTags, GetRegisterTagSuggestions, GetTagSuggestions, SavePrefferedTags } from '../services/tagService';
 import { requireAuth } from '../routers/authRouters';
 
