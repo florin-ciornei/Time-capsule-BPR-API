@@ -46,13 +46,13 @@ router.post('/', requireAuth, upload.array('contents'), async (req, res) => {
 	let backgroundType: number = req.body.backgroundType;
 
 	// while testing allow creating capsules with a past date
-	if (process.env.NODE_ENV != 'test' && process.env.NODE_ENV != 'dev' && openDate < new Date()) {
-		return res.status(400).send({
-			status: 'error',
-			code: 'invalid_open_data',
-			message: 'Open date must be in the future!'
-		});
-	}
+	// if (process.env.NODE_ENV != 'test' && process.env.NODE_ENV != 'dev' && openDate < new Date()) {
+	// 	return res.status(400).send({
+	// 		status: 'error',
+	// 		code: 'invalid_open_data',
+	// 		message: 'Open date must be in the future!'
+	// 	});
+	// }
 
 	if (name.length < 3 || name.length > 32) {
 		return res.status(400).send({
