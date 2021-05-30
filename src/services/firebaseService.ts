@@ -30,6 +30,12 @@ export const UploadFileToBucket = async (file: Express.Multer.File, folder: stri
 	});
 };
 
+export const DeleteFile = async (imageUrl: string) => {
+	const cleanedUrl = imageUrl.replace('https://storage.googleapis.com/auth-development-25425.appspot.com/', '').split('?')[0];
+	const existingFile = bucket.file(cleanedUrl);
+	await existingFile.delete();
+};
+
 export default {
 	admin,
 	bucket

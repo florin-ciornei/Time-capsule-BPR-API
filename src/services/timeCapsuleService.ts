@@ -2,7 +2,7 @@ import GroupModel, { Group } from '../schemas/groupSchema';
 import UserModel, { User } from '../schemas/userSchema';
 import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
 import { SendAddedToAllowedUsersNotifications } from './notificationService';
-import firebase, { UploadFileToBucket } from './firebaseService';
+import firebase, { DeleteFile, UploadFileToBucket } from './firebaseService';
 import NotificationModel, { Notification } from '../schemas/notificationSchema';
 import { LeanDocument } from 'mongoose';
 
@@ -70,6 +70,11 @@ export const UpdateTimeCapsule = async (timeCapsuleID: string, ownerID: string, 
 };
 
 export const DeleteTimeCapsule = async (capsuleId: string, ownerId: string): Promise<boolean> => {
+	const timeCapsule = await TimeCapsuleModel.findById(capsuleId);
+	timeCapsule.contents.forEach(async (file) => {
+		await DeleteFile(file.url);
+	});
+
 	let result = await TimeCapsuleModel.deleteOne({
 		_id: capsuleId,
 		owner: ownerId
