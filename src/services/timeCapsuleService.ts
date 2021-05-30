@@ -2,7 +2,7 @@ import GroupModel, { Group } from '../schemas/groupSchema';
 import UserModel, { User } from '../schemas/userSchema';
 import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
 import { SendAddedToAllowedUsersNotifications } from './notificationService';
-import firebase from './firebaseService';
+import firebase, { UploadFileToBucket } from './firebaseService';
 import NotificationModel, { Notification } from '../schemas/notificationSchema';
 import { LeanDocument } from 'mongoose';
 
@@ -44,7 +44,7 @@ export const CreateTimeCapsule = async (
 	let contents: { url: string; mimeType: string }[] = [];
 	for (let i = 0; i < files.length; i++) {
 		let file = files[i];
-		let fileUrl = await firebase.uploadFileToBucket(file, timeCapsule._id, i + '');
+		let fileUrl = await UploadFileToBucket(file, `capsuleContents/${timeCapsule._id}`, i + '');
 		contents.push({
 			url: fileUrl,
 			mimeType: file.mimetype

@@ -4,7 +4,7 @@ import NotificationModel, { Notification } from '../schemas/notificationSchema';
 import GroupModel, { Group } from '../schemas/groupSchema';
 import { LeanDocument } from 'mongoose';
 import { SendFollowNotification } from './notificationService';
-import firebase from './firebaseService';
+import firebase, { UploadFileToBucket } from './firebaseService';
 
 export const CheckUserIdInUse = async (firebaseUserId: string): Promise<boolean> => {
 	return (await UserModel.find({ _id: firebaseUserId }).lean()).length > 0;
@@ -94,7 +94,7 @@ export const DeleteUserProfile = async (userId: string) => {
 };
 
 export const UpdateProfilePicture = async (userId: string, file: Express.Multer.File) => {
-	let fileUrl = await firebase.uploadFileToBucket(file, 'profilePicture', userId);
+	let fileUrl = await UploadFileToBucket(file, 'user/profilePicture', userId);
 	fileUrl += `?v=${new Date().getTime()}`;
 	await UserModel.findByIdAndUpdate(userId, { profileImageUrl: fileUrl });
 	return fileUrl;
