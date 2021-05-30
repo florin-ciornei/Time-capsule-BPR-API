@@ -1,5 +1,4 @@
 import GroupModel, { Group } from '../schemas/groupSchema';
-import UserModel, { User } from '../schemas/userSchema';
 import NotificationModel, { Notification } from '../schemas/notificationSchema';
 import { SendAddedToGroupNotifications } from './notificationService';
 

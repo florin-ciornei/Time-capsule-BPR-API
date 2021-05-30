@@ -5,7 +5,6 @@ import { SendAddedToAllowedUsersNotifications } from './notificationService';
 import firebase from './firebaseService';
 import NotificationModel, { Notification } from '../schemas/notificationSchema';
 import { LeanDocument } from 'mongoose';
-import { database } from 'firebase-admin';
 
 export const CreateTimeCapsule = async (
 	tags: string[],
