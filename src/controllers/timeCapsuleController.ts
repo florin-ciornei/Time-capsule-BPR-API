@@ -398,7 +398,7 @@ router.get('/:id/react/:reaction', requireAuth, async (req, res) => {
  */
 router.get('/:id', async (req, res) => {
 	let timeCapsuleID = req.params.id;
-	let ownerID = req.userId;
+	let requestingUserId = req.userId;
 
 	if (!ObjectId.isValid(timeCapsuleID))
 		return res.status(400).send({
@@ -406,7 +406,7 @@ router.get('/:id', async (req, res) => {
 			message: 'Time capsule id is not a valid id'
 		});
 
-	let timeCapsule = await GetTimeCapsuleByIdAndUserId(timeCapsuleID, ownerID);
+	let timeCapsule = await GetTimeCapsuleByIdAndUserId(timeCapsuleID, requestingUserId);
 	if (!timeCapsule)
 		return res.status(400).send({
 			status: 'error',

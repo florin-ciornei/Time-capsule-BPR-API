@@ -207,8 +207,7 @@ export const GetPublicFeed = async (status: string, page: number, resultsPerPage
 
 export const GetTimeCapsuleByIdAndUserId = async (timeCapsuleId: string, ownerId: string): Promise<any> => {
 	let timeCapsule = await TimeCapsuleModel.findOne({
-		_id: timeCapsuleId,
-		owner: ownerId
+		_id: timeCapsuleId
 	})
 		.populate('owner', 'name')
 		.lean();
