@@ -45,6 +45,14 @@ router.post('/', requireAuth, upload.array('contents'), async (req, res) => {
 	};
 	let backgroundType: number = req.body.backgroundType;
 
+	// if there is a single tag it comes here as a string
+	if (typeof tags === 'string') tags = [tags];
+
+	// if the user did not select any background
+	if (isNaN(backgroundType)) {
+		backgroundType = 4;
+	}
+
 	// while testing allow creating capsules with a past date
 	// if (process.env.NODE_ENV != 'test' && process.env.NODE_ENV != 'dev' && openDate < new Date()) {
 	// 	return res.status(400).send({
