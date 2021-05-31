@@ -1,5 +1,6 @@
 import GroupModel, { Group } from '../schemas/groupSchema';
 import NotificationModel, { Notification } from '../schemas/notificationSchema';
+import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
 import { SendAddedToGroupNotifications } from './notificationService';
 
 export const IsGroupNameUnique = async (name: string, userId: string): Promise<boolean> => {
@@ -48,5 +49,6 @@ export const GetGroupById = async (groupId: string, ownerId: string): Promise<Gr
 
 export const DeleteGroup = async (groupId: string, ownerId: string): Promise<boolean> => {
 	let result = await GroupModel.deleteOne({ _id: groupId, owner: ownerId });
+	await TimeCapsuleModel.updateMany({}, { $pull: { allowedGroups: groupId } });
 	return result.n == 1;
 };

@@ -80,6 +80,16 @@ export const UpdateUser = async (userId: string, name: string) => {
 
 export const DeleteUserProfile = async (userId: string) => {
 	await DeleteProfilePicture(userId);
+
+	// remove user from the list of allwoed users from a time capsule
+	await TimeCapsuleModel.updateMany({}, { $pull: { allowedUsers: userId } });
+
+	// remove user from the groups to which he is added
+	const groupsContainingUser = await GroupModel.find({ users: userId });
+	groupsContainingUser.forEach(async (group) => {
+		await group.update({ $pull: { users: userId }, $inc: { usersCount: -1 } });
+	});
+
 	await UserModel.deleteOne({ _id: userId });
 	await NotificationModel.deleteMany({ toUser: userId });
 	await TimeCapsuleModel.deleteMany({ owner: userId });
