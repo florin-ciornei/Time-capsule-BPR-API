@@ -1,7 +1,7 @@
 import GroupModel, { Group } from '../schemas/groupSchema';
 import UserModel, { User } from '../schemas/userSchema';
 import TimeCapsuleModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
-import { SendAddedToAllowedUsersNotifications } from './notificationService';
+import { SendAddedToAllowedUsersNotifications, SendNewCapsuleCreatedNotifications as SendNewCapsuleCreatedNotificationsToGroups } from './notificationService';
 import firebase, { DeleteFile, UploadFileToBucket } from './firebaseService';
 import NotificationModel, { Notification } from '../schemas/notificationSchema';
 import { LeanDocument } from 'mongoose';
@@ -53,7 +53,10 @@ export const CreateTimeCapsule = async (
 	timeCapsule.contents = contents;
 	await timeCapsule.save();
 
-	if (process.env.NODE_ENV != 'test') SendAddedToAllowedUsersNotifications(timeCapsule._id, allowedUsers, ownerId);
+	if (process.env.NODE_ENV != 'test') {
+		SendAddedToAllowedUsersNotifications(timeCapsule._id, allowedUsers, ownerId);
+		SendNewCapsuleCreatedNotificationsToGroups(timeCapsule._id, ownerId, allowedGroups);
+	}
 
 	return timeCapsule;
 };
@@ -65,7 +68,10 @@ export const LeaveAllowedUsers = async (capsuleId: string, userId: string) => {
 
 export const UpdateTimeCapsule = async (timeCapsuleID: string, ownerID: string, name: string, allowedUsers: string[], allowedGroups: string[]): Promise<TimeCapsule> => {
 	let timeCapsule = await TimeCapsuleModel.findOneAndUpdate({ _id: timeCapsuleID, owner: ownerID }, { name: name, allowedUsers: allowedUsers, allowedGroups: allowedGroups }, { new: true });
-	if (process.env.NODE_ENV != 'test') SendAddedToAllowedUsersNotifications(timeCapsule._id, allowedUsers, ownerID);
+	if (process.env.NODE_ENV != 'test') {
+		SendAddedToAllowedUsersNotifications(timeCapsule._id, allowedUsers, ownerID);
+		SendNewCapsuleCreatedNotificationsToGroups(timeCapsule._id, ownerID, allowedGroups);
+	}
 	return timeCapsule;
 };
 

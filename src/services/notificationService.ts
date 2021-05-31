@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
 import { LeanDocument } from 'mongoose';
-import { Group } from '../schemas/groupSchema';
 import NotificationModel, { Notification } from '../schemas/notificationSchema';
 import timeCapsuleSchema from '../schemas/timeCapsuleSchema';
 import TimeCapsulenModel, { TimeCapsule } from '../schemas/timeCapsuleSchema';
+import GroupModel, { Group } from '../schemas/groupSchema';
 
 export const GetUserNotifications = async (page: number, resultsPerPage: number, userId: string): Promise<LeanDocument<Notification>[]> => {
 	let notifications = await NotificationModel.find({ toUser: userId })
@@ -54,6 +54,32 @@ export const SendAddedToAllowedUsersNotifications = async (capsuleId: string, us
 			group: undefined,
 			type: 'addedToAllowedUsers'
 		});
+	}
+};
+
+/**
+ * Sends a notification the the users in groups that were added to a new time capsule
+ * @param capsuleId the id of the created time capsules
+ * @param ownerId the id of user who created the time capsule
+ * @param groupsIds the list of ids the groups that were added to the time capsule
+ */
+export const SendNewCapsuleCreatedNotifications = async (capsuleId: string, ownerId: string, groupsIds: string[]) => {
+	for (let i = 0; i < groupsIds.length; i++) {
+		const group = await GroupModel.findById(groupsIds[i]);
+		for (let j = 0; j < group.users.length; j++) {
+			const toUserId = group.users[j];
+			let existingNotification = await NotificationModel.countDocuments({ toUser: toUserId, timeCapsule: capsuleId, group: group._id, type: 'newCapsuleCreated' });
+			// dont add notification if it already exists for this user
+			if (existingNotification > 0) continue;
+			await NotificationModel.create({
+				timeCapsule: capsuleId,
+				byUser: ownerId,
+				toUser: toUserId,
+				time: new Date(),
+				group: group._id,
+				type: 'newCapsuleCreated'
+			});
+		}
 	}
 };
 
