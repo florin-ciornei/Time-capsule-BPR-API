@@ -7,7 +7,7 @@ import GroupModel, { Group } from '../schemas/groupSchema';
 
 export const GetUserNotifications = async (page: number, resultsPerPage: number, userId: string): Promise<LeanDocument<Notification>[]> => {
 	let notifications = await NotificationModel.find({ toUser: userId })
-		.populate('byUser', '_id name profilePictureUrl')
+		.populate('byUser', '_id name profileImageUrl')
 		.populate('group', '_id name')
 		.populate('timeCapsule', '_id name openData description backgroundType')
 		.sort({ time: -1 })

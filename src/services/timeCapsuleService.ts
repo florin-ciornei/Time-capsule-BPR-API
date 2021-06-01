@@ -89,7 +89,7 @@ export const DeleteTimeCapsule = async (capsuleId: string, ownerId: string): Pro
 };
 
 export const GetMyTimeCapsules = async (userId: string): Promise<LeanDocument<TimeCapsule>[]> => {
-	let timeCapsules = await TimeCapsuleModel.find({ owner: userId }).populate('owner', 'name').lean();
+	let timeCapsules = await TimeCapsuleModel.find({ owner: userId }).populate('owner', 'name profileImageUrl').lean();
 	timeCapsules = timeCapsules.map((timeCapsule) => parseTimeCapsule(timeCapsule as TimeCapsule, userId, false));
 	return timeCapsules;
 };
@@ -114,7 +114,7 @@ export const GetUsersTimeCapsules = async (fromUserId: string, requestingUserId:
 			{ allowedGroups: { $in: myGroupIds } }
 		]
 	})
-		.populate('owner', 'name')
+		.populate('owner', 'name profileImageUrl')
 		.lean();
 
 	timeCapsules = timeCapsules.map((timeCapsule) => parseTimeCapsule(timeCapsule as TimeCapsule, requestingUserId, false));
@@ -157,7 +157,7 @@ export const GetFeed = async (userId: string, page: number, resultsPerPage: numb
 	}
 
 	let timeCapsules = await TimeCapsuleModel.find(filter)
-		.populate('owner', 'name')
+		.populate('owner', 'name profileImageUrl')
 		.sort({ createDate: 'desc' })
 		.skip(page * (resultsPerPage - 2))
 		.limit(resultsPerPage - 2)
@@ -202,7 +202,7 @@ export const GetPublicFeed = async (status: string, page: number, resultsPerPage
 	}
 
 	let timeCapsules = await TimeCapsuleModel.find(filter)
-		.populate('owner', 'name')
+		.populate('owner', 'name profileImageUrl')
 		.sort({ createDate: 'desc' })
 		.skip(page * resultsPerPage)
 		.limit(resultsPerPage)
@@ -215,7 +215,7 @@ export const GetTimeCapsuleByIdAndUserId = async (timeCapsuleId: string, ownerId
 	let timeCapsule = await TimeCapsuleModel.findOne({
 		_id: timeCapsuleId
 	})
-		.populate('owner', 'name')
+		.populate('owner', 'name profileImageUrl')
 		.lean();
 	return parseTimeCapsule(timeCapsule as TimeCapsule, ownerId, false);
 };
@@ -224,7 +224,7 @@ export const GetSubcribedTimeCapsules = async (userId: string): Promise<TimeCaps
 	let subscribedCapsules = await TimeCapsuleModel.find({
 		subscribedUsers: userId
 	})
-		.populate('owner', 'name')
+		.populate('owner', 'name profileImageUrl')
 		.lean();
 	return subscribedCapsules.map((timeCapsule) => parseTimeCapsule(timeCapsule as TimeCapsule, userId, false));
 };
@@ -299,7 +299,7 @@ export const GetSearchTimeCapsules = async (
 		}
 	}
 
-	let capsulesFound = await TimeCapsuleModel.find(filter).populate('owner', 'name').lean();
+	let capsulesFound = await TimeCapsuleModel.find(filter).populate('owner', 'name profileImageUrl').lean();
 	return capsulesFound.map((timeCapsule) => parseTimeCapsule(timeCapsule as TimeCapsule, userId, false));
 };
 
