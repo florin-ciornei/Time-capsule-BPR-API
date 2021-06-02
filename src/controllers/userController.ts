@@ -123,7 +123,7 @@ router.put('/followUnfollow/:id', requireAuth, async (req, res) => {
 	let isFollowed = followedUser.followedByUsers ? followedUser.followedByUsers.includes(follower) : false;
 
 	if (isFollowed) {
-		await ToggleFollow(followedUserID, follower, true);
+		await ToggleFollow(followedUserID, follower, false);
 		res.status(200).send({
 			status: 'success',
 			message: 'User was successfully unfollowed!'
