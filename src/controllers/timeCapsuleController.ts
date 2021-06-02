@@ -336,7 +336,7 @@ router.get('/:id/toggleSubscription', requireAuth, async (req, res) => {
 			message: "Time capsule with this id doesn't exist."
 		});
 
-	if (timeCapsule.subscribedUsers && timeCapsule.subscribedUsers.includes(req.userId)) {
+	if (Array.isArray(timeCapsule.subscribedUsers) && timeCapsule.subscribedUsers.includes(req.userId)) {
 		ToggleSubscribedUser(timeCapsuleID, req.userId, false);
 		res.status(200).send({
 			status: 'success',
