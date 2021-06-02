@@ -23,6 +23,9 @@ export interface TimeCapsule extends mongoose.Document {
 	reactionsLean?: { reaction: string; count: number }[];
 	myReaction?: string;
 	openNotificationSent: boolean;
+
+	// not stored
+	subscribedUsersCount: number;
 }
 
 const TimeCapsuleSchema: mongoose.Schema = new mongoose.Schema({

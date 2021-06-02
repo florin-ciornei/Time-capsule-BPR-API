@@ -354,6 +354,8 @@ const parseTimeCapsule = (timeCapsule: TimeCapsule, requestingUserId: string, re
 	if (timeCapsule.subscribedUsers) timeCapsule.isSubscribed = timeCapsule.subscribedUsers.includes(requestingUserId);
 	else timeCapsule.isSubscribed = false;
 
+	if (timeCapsule.subscribedUsers) timeCapsule.subscribedUsersCount = timeCapsule.subscribedUsers.length;
+
 	// 2. fill the reactionsLean with values
 	timeCapsule.reactionsLean = Object.keys(Reaction)
 		.map((k) => Reaction[k])
