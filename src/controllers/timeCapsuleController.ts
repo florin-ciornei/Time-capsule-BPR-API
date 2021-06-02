@@ -45,8 +45,10 @@ router.post('/', requireAuth, upload.array('contents'), async (req, res) => {
 	};
 	let backgroundType: number = req.body.backgroundType;
 
-	// if there is a single tag it comes here as a string
+	// if there is a single value in arrays it comes as string
 	if (typeof tags === 'string') tags = [tags];
+	if (typeof allowedUsers === 'string') allowedUsers = [allowedUsers];
+	if (typeof allowedGroups === 'string') allowedGroups = [allowedGroups];
 
 	// if the user did not select any background
 	if (isNaN(backgroundType)) {
@@ -153,6 +155,10 @@ router.put('/:id', requireAuth, async (req, res) => {
 	let name: string = req.body.name;
 	let allowedUsers: string[] = req.body.allowedUsers;
 	let allowedGroups: string[] = req.body.allowedGroups;
+
+	// if there is a single value in arrays it comes as string
+	if (typeof allowedUsers === 'string') allowedUsers = [allowedUsers];
+	if (typeof allowedGroups === 'string') allowedGroups = [allowedGroups];
 
 	if (!ObjectId.isValid(capsuleId))
 		return res.status(400).send({
