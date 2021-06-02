@@ -304,7 +304,7 @@ export const GetSearchTimeCapsules = async (
 };
 
 export const GetTimeCapsuleById = async (capsuleId: string): Promise<any> => {
-	return await TimeCapsuleModel.find({ _id: capsuleId });
+	return await TimeCapsuleModel.findById(capsuleId);
 };
 
 export const ToggleSubscribedUser = async (capsuleId: string, userId: string, toggle: boolean) => {
