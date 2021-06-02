@@ -27,6 +27,14 @@ router.post('/register', requireAuth, async (req, res) => {
 	let email = req.body.email as string;
 	let name = req.body.name as string;
 
+	if (name.length > 16) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'name_too_long',
+			message: 'The name is too long.'
+		});
+	}
+
 	//check for existing user
 	let userExists = await CheckUserIdInUse(req.userId);
 	if (userExists) {
@@ -133,7 +141,16 @@ router.put('/followUnfollow/:id', requireAuth, async (req, res) => {
  * Update user data.
  */
 router.put('/', requireAuth, async (req, res) => {
-	await UpdateUser(req.userId, req.body.name);
+	const name = req.body.name as string;
+	if (name.length > 16) {
+		return res.status(400).send({
+			status: 'error',
+			code: 'name_too_long',
+			message: 'The name is too long.'
+		});
+	}
+
+	await UpdateUser(req.userId, name);
 	res.status(200).send({
 		status: 'success',
 		message: 'User data updated!'
