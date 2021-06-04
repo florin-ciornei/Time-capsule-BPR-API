@@ -66,20 +66,21 @@ export const SendAddedToAllowedUsersNotifications = async (capsuleId: string, us
 export const SendNewCapsuleCreatedNotifications = async (capsuleId: string, ownerId: string, groupsIds: string[]) => {
 	for (let i = 0; i < groupsIds.length; i++) {
 		const group = await GroupModel.findById(groupsIds[i]);
-		for (let j = 0; j < group.users.length; j++) {
-			const toUserId = group.users[j];
-			let existingNotification = await NotificationModel.countDocuments({ toUser: toUserId, timeCapsule: capsuleId, group: group._id, type: 'newCapsuleCreated' });
-			// dont add notification if it already exists for this user
-			if (existingNotification > 0) continue;
-			await NotificationModel.create({
-				timeCapsule: capsuleId,
-				byUser: ownerId,
-				toUser: toUserId,
-				time: new Date(),
-				group: group._id,
-				type: 'newCapsuleCreated'
-			});
-		}
+		if (group)
+			for (let j = 0; j < group.users.length; j++) {
+				const toUserId = group.users[j];
+				let existingNotification = await NotificationModel.countDocuments({ toUser: toUserId, timeCapsule: capsuleId, group: group._id, type: 'newCapsuleCreated' });
+				// dont add notification if it already exists for this user
+				if (existingNotification > 0) continue;
+				await NotificationModel.create({
+					timeCapsule: capsuleId,
+					byUser: ownerId,
+					toUser: toUserId,
+					time: new Date(),
+					group: group._id,
+					type: 'newCapsuleCreated'
+				});
+			}
 	}
 };
 

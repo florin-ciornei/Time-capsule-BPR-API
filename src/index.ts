@@ -19,7 +19,6 @@ const port = process.env.PORT || 8080;
 	console.log('Connected to MongoDB');
 	app.listen(port, () => {
 		console.log(`REST API listening at http://localhost:${port}`);
-		console.log(`For API documentation visit http://localhost:${port}/doc`);
 	});
 })();
 
