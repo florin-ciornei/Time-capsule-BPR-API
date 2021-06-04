@@ -2,7 +2,7 @@ import * as admin from 'firebase-admin';
 
 // Initialize firebase admin SDK
 admin.initializeApp({
-	credential: admin.credential.cert('./auth-development-25425-firebase-adminsdk-wpx5f-578f9f8761.json'),
+	credential: admin.credential.cert('./firebaseCredentials.json'),
 	storageBucket: 'auth-development-25425.appspot.com'
 });
 
